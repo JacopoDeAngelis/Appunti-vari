@@ -1,0 +1,10 @@
+*.bib
+*.log
+*.out
+*.gz
+*.xml
+*.aux
+*.toc
+*.dvi
+*.blg
+*.bbl
