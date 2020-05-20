@@ -214,6 +214,43 @@ usemap="#planetmap">
 \end{table}
 
 \paragraph{<article>}
+Specifica un contenuto indipendente, auto contenuto. Dovrebbe aver senso di per sè e dovrebbe essere distribuibile 
+
+\paragraph{<aside>}
+Indica un contenuto a parte rispetto al contenuto nel quale è inserito
+
+\paragraph{<audio>}
+Contiene audio stream. Al momento sono supportati tre formati: MP3, WAV e OGG.
+
+% Please add the following required packages to your document preamble:
+% \usepackage[normalem]{ulem}
+% \useunder{\uline}{\ul}{}
+\begin{table}[]
+\begin{tabular}{|l|l|l|}
+\hline
+{\ul \textbf{Attributo}} & {\ul \textbf{Valore}}                                          & {\ul \textbf{Descrizione}}                                                                                                                 \\ \hline
+\textbf{autoplay}        & autoplay                                                       & Specifica che l'audio parte appena pronto                                                                                                  \\ \hline
+\textbf{controls}        & controls                                                       & Specifica che i controlli devono essere mostrati                                                                                           \\ \hline
+\textbf{loop}            & loop                                                           & Specifica che l'audio partirà nuovamente                                                                                                   \\ \hline
+\textbf{muted}           & muted                                                          & Specifica che l'output sarà mutato                                                                                                         \\ \hline
+\textbf{preload}         & \begin{tabular}[c]{@{}l@{}}auto\\ metadata\\ none\end{tabular} & \begin{tabular}[c]{@{}l@{}}Specifica se e come l'autore pensa che l'audio\\ debba essere caricato quando la pagina è caricata\end{tabular} \\ \hline
+\textbf{src}             & URL                                                            & Specifica l'URL della fonte                                                                                                                \\ \hline
+\end{tabular}
+\end{table}
+
+\paragraph{<base>}
+Inserito nell'head, specifica l'URL base per tutti i link della pagina.
+
+\paragraph{<bdi>}
+Bi-Direction Isolation, serve per separare dal resto del testo una parte che potrebe essere scritta in una direzione differente rispetto al resto.	
+
+\paragraph{<bdo>}
+dir = rtl/ltr
+Bi-Direction Override, serve per separare dal resto del testo una parte che potrebe essere scritta in una direzione differente rispetto al resto e imporre la direzione.	
+
+\paragraph{<blockquote>}
+Serve per citare un'altra fonte. cite=url per dare l'origine.
+<q> per brevi citazioni inline.
 
 \subsection{Style}
 Style, tag utilizzato all'interno di head, serve ad includere l'editing dello stile della pagine. Lo si può fare all'interno della pagina stessa ma è una pratica altamente sconsigliata, sarebbe meglio creare un file .css esterno da poter includere.
@@ -233,6 +270,16 @@ La pratica migliore è usare link con un riferimento al file css esterno.
 	\end{huge}
 \end{center}
 \lstinputlisting[language=HTML]{Codici\CSS\Lezione_3.css}
+\chapter{CSS}
+\chapter{Javascript}
+\section{Variabili}
+Si crea una variabile con "var". JS è debolmente tipizzato.
+
+I modi migliori per definire una variabile sono due:
+\begin{itemize}
+	\item \textbf{let}: 
+	\item \textbf{const}: 
+\end{itemize}
 \chapter{Link utili}
 \begin{itemize}
 	\item \href{https://www.w3schools.com/}{W3 school}
