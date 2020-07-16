@@ -1,0 +1,66 @@
+\documentclass[11pt,a4paper]{book}
+
+\usepackage{Appunti}
+
+\begin{document}
+\title{Secure code}
+\author{Jacopo De Angelis}
+\maketitle
+
+\pagebreak
+\tableofcontents
+\pagebreak
+
+\chapter{Concetti di sicurezza}
+\section{Privilegi minimi}\label{sec: privilegi minimi}
+Nel caso i permessi non siano dati correttamente, un utente malintenzionato potrebbe decidere di accedere ai dati in maniera distruttiva, ad esempio tramite una SQL injection.
+
+In questo caso una soluzione è cambiare i permessi per i vari gruppi in modo che abbiano il potere minimo per le loro funzioni. Ad esempio, nel caso di un database di un sito dove le query non sono sanificate (ovvero è possibile eseguire codice di accesso al DB all'interno delle query), si può decidere che gli utenti abbiano solo possibilità di lettura e non di scrittura.
+
+Nel caso l'utente malintenzionato acceda tramite un ruolo da amministratore potrebbe decidere di cambiare password dei database, cambiare dati o interrompere il servizio. In più qualsiasi codice eseguito da un utente con certi privilegi verrebbe eseguito con gli stessi, causando altri tipi di malfunzionamento
+
+\textbf{Il concetto dei privilegi minimi non corregge le vulnerabilità del sistema, come le code injection, ma rende più difficile per un utente malintenzionato sfruttare queste falle}
+
+\textbf{In generale i processi avviati dall'applicazione dovrebbero essere eseguiti con i privilegi minimi necessari}
+
+\section{Difesa in profondità}\label{sec: difesa in profondità}
+Il concetto dietro alla difesa in profondità è quello di creare più livelli di sicurezza, di diverso tipo, tramite diversi sistemi. Ad esempio:
+\begin{itemize}
+	\item Dividere i server in più network in modo che l'attacco non possa propagarsi
+	\item inserire un firewall
+	\item criptare i dati del database
+	\item sanificare le query e parametrizzarle
+	\item usare validazione sia a livello di frontend che di backend
+	\item mettere in sicurezza i dati nel mondo fisico, ad esempio tramite guardie ai server, accesso solo tramite badge, ecc.
+\end{itemize}
+
+\textbf{Implementare sempre più livelli di sicurezza, di più tipi, fisici, architetturali e di codice}
+
+\textbf{Livello dati}: controllo degli accessi, criptazione, backup
+
+\textbf{Livello applicazione}: autenticazione, autorizzazione, auditing (noti assieme come AAA), codice sicuro e "hardening"
+
+\textbf{Livello host}: "hardening", autenticazione, gestione degli aggiornamenti, antivirus
+
+\textbf{Livello di network interno}: Segmentazione del network, IPsec, TLS, NAT
+
+\textbf{Livello perimetrale}: firewall, TLS, negazione dell'accesso, prevenzione
+
+\textbf{Sicurezza fisica}: guardie, lucchetti, dispositivi di tracciamento, badge
+\section{Sicuro per default}\label{sec: sicuro per default}
+Il concetto dietro ad un software sicuro per default è che le impostazioni di sicurezza siano correttamente impostate.
+
+Per fare un esempio, la richiesta affinchè la password inserita sia sicura (lunghezza minima, caratteri speciali, ecc.) è una buona misura di sicurezza che dovrebbe essere implementata di base. In questo modo gli utenti sarebbero già più al sicuro da attacchi di brute force.
+
+Un altro esempio è quella di una code injection in campi non classici, ad esempio tramite l'inserimento password. Per questo caso si potrebbe implementare una sanificazione delle query al sistema, parametrizzando le richieste e impedendo che queste abbiano effetti indesiderati. In più, basandoci sul concetto dei privilegi minimi (\ref{sec: privilegi minimi}) le query potrebbero essere eseguite con i privilegi minimi.
+
+\textbf{Uno sviluppatore dovrebbe pensare alla sicurezza dall'inizio e durante tutto lo sviluppo}
+
+\textbf{Applicare il concetto della difesa in profondità (\ref{sec: difesa in profondità}), ovvero implementare più livelli di sicurezza}
+
+\textbf{Implementare la sicurezza a livello di applicazione e di infrastruttura}
+
+\textbf{Disabilitare funzionalità o servizi non usati}
+
+
+\end{document}
