@@ -62,5 +62,109 @@ Un altro esempio è quella di una code injection in campi non classici, ad esemp
 
 \textbf{Disabilitare funzionalità o servizi non usati}
 
+\section{Controllo di errori robusto}
+Mai dare troppe informazioni all'utente riguardanti un errore. Ad esempio, mai permettere che una pagina, come errore, restituisca uno stack dell'errore o altre informazioni che potrebbe usare.
+
+Parte essenziale di questo controllo è la gestione delle eccezioni. Ad esempio se una pagina di log in lanciasse un'eccezione causata da un input non previsto potrebbe semplicemente restituire un messaggio generico di errore. 
+
+\textbf{Usare messaggi di errore generici e controllare la chiusura dell'applicazione}
+
+\textbf{Non condividere informaizoni private dell'applicazione}
+
+\textbf{Scrivere su di un log gli errori in modo da poterli usare per le correzioni}
+
+\section{Non fidarsi di alcun input \textit{(trust no input)}}
+Le applicazioni non dovrebbero mai accettare un input non validato dal sistema. Ad esempio un errore che deriva da un precedente errore e che fa crollare l'app.
+
+Ricevere --> validare --> calcolare --> gestire le eccezioni
+
+\textbf{Mai fidarsi dell'utente}
+
+\textbf{Limitare le opzioni possibili per l'utente, ad esempio offrendo un menù a tendina per la selezione}
+
+\textbf{Validare ogni input, inclusi gli input che arrivano da file e DB}
+
+\textbf{Rifiutare i dati invalidi o almeno depurarli o ignorarli}
+
+\textbf{Esempi di validazione}:
+\begin{itemize}
+	\item corrispondenza
+	\item whitelist
+	\item blacklist
+\end{itemize}
+
+
+\section{Open design}
+Quando ci si basa sul design dell'applicazione come misura di sicurezza si è in errore. Si dice anche "sicurezza per oscuramento". Ad esempio, usare una porta non comune non è una buona misura di sicurezza, si possono scansionare le porte.
+
+Anche un'autenticazione nascosta, ad esempio passando un form segreto per indicare il livello di privilegio dell'utente, potrebbe essere sfruttato.
+
+Si potrebbero usare certificati, oppure usare ruoli legati all'utente.
+
+\textbf{Come regola base si dovrebbe implementare tutta la sicurezza}
+
+\textbf{Non basarsi solo sulla sicurezza per oscuramento}
+
+\textbf{La sicurezza si dovrebbe basare su metodi conosciuti}
+
+
+\section{Fallire in sicurezza}
+Le eccezioni dovrebbero essere tutte gestite in sicurezza.
+
+\textbf{Ogni blocco dovrebbe avere tre risultati determinati}:
+\begin{itemize}
+	\item SE l'utente è autorizzato ALLORA esegui l'azione
+	\item SE l'utente non è autorizzato ALLORA non eseguire l'azione
+	\item SE c'è un'eccezione ALLORA torna a prima dell'azione e manda un messaggio di errore
+\end{itemize}
+
+\section{Riutilizzo dei sistemi di sicurezza}
+Invece di creare nuovo codice (e quindi nuove falle) sarebbe meglio riutilizzare, dove possibile, codice già in uso e già testato.
+
+Se, ad esempio, un modulo viene utilizzato in più punti e poi viene scoperta una falla, basterà correggere il modulo per applicare la modifica a tutti i blocchi di codice. Avessimo creato del codice duplicato ci sarebbero stati problemi.
+
+\textbf{Come regola, tenere la semplicità in mente quando si crea un sistema}
+
+\textbf{Sempre meglio riutilizare codice già esistente e testato}
+
+\textbf{Educare il gruppo alle buone pratiche di programmazione}
+
+\section{Logging}
+Mai loggare informazioni confidenziali o personali. Sbagliato anche NON loggare mai. É sbagliato anche non loggare informazioni utili dal punto di vista della sicurezza.
+
+I log possono essere usati per permettere la risposta ad un eventuale attacco di brute forcing, ad esempio.
+
+\textbf{Mai centralizare i log. Assicurarsi che i log siano semplici da vedere e gestire}
+
+\textbf{Bisognerebbe loggare a tutti i livelli. Eventi come tentativi di login, modifiche o richieste di dati dovrebbero essere loggate}
+
+\textbf{Seguire le 5 W del logging}:
+\begin{enumerate}
+	\item Cos'è successo
+	\item Chi era coinvolto
+	\item Quando
+	\item Dove, inteso come informazioni sul luogo fisico di attacco
+	\item Da dove arriva il problema
+\end{enumerate}
+
+\textbf{Non loggare informazioni private}
+
+\textbf{Limitare l'accesso ai log in base all'utente}
+
+\section{Protezione dei dati}
+Il codice e le informazioni importanti andrebbero protette in più modi, ad esempio:
+\begin{itemize}
+	\item comunicazioni protette tramite tls
+	\item niente cache dei dati privati, come ad esempio alle carte di credito
+	\item la repo è su di un server criptato al sicuro
+	\item accesso solo interno
+	\item accesso limitato agli utenti necessari
+	\item codice offuscato
+\end{itemize}
+
+Anche proteggere la privacy è essenziale. I dati possono essere protetti tramite accesso limitato ai dati, contratti di non diffusione, ecc.
+
+\chapter{Sicurezza web app 101}
+
 
 \end{document}
