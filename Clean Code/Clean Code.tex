@@ -69,5 +69,72 @@ Possiamo andare anche oltre e scrivere una semplice classe per le celle invece d
 \lstinputlisting[language=]{code/005}\label{code: 005}
 
 \section{Evitare la disinformazione}
+Mai usare parole che non descrivono la realtà, ad esempio usare accountList solo se effettivamente ci troviamo davanti ad una List.
+
+Non usare nomi che variano tra di loro per dei piccoli dettagli, ad esempio \emph{XYZControllerForEfficient\textbf{Handling}OfStrings} e \emph{XYZControllerForEfficient\textbf{Storage}OfStrings}
+
+Avere una naming convention consistente è essenziale. Un pessimo esempio di uso è quello di o ed l minuscoli, pericolosamente simili a 0 e 1.
+
+\section{Fare distinzioni significative}
+Evitare nomi con degli errori di battitura intenzionali perchè si vogliono nominare due variabili allo stesso modo. Evitare anche nomi che non danno informazioni, ad esempio:
+\lstinputlisting[language=]{code/006}\label{code: 006}
+
+Evitare nomi "che creano rumore", ad esempio ProductInfo e ProductData si differenziano per la seconda parola ma comunque non sappiamo cosa facciano.
+
+Il tipo di entità non dovrebbe mai essere contenuto nel nome. NameString non ha senso, non ci chiederemmo mai se un semplice Name possa essere un float, questo perchè il nome stesso ci informa del suo contenuto.
+
+Un esempio di confusione è:
+\lstinputlisting[language=]{code/007}\label{code: 007}
+Come potremmo mai sapere quale funzione chiamare dal suo nome?
+
+Distinguere sempre i nomi in modo da intuire immediatamente la loro funzione leggendoli.
+
+\section{Usare nomi pronunciabili}
+Devi poterlo pronunciare. Hai mai provato a discutere della funzione della classe Genymdhms (generation date, year, month, day, hour, minute, and second)? Spero di no.
+
+Immaginiamo comparare questa classe
+\lstinputlisting[language=]{code/008}\label{code: 008}
+con questa
+\lstinputlisting[language=]{code/009}\label{code: 009}
+
+\section{Usare nomi ricercabili}
+Le variabili con nome di una singola lettera vanno bene solo come variabili locali di un metodo, mai in altro modo, sarebbe impossibile cercarle altrimenti.
+
+Compariamo
+\lstinputlisting[language=]{code/010}\label{code: 010}
+con
+\lstinputlisting[language=]{code/011}\label{code: 011}
+
+\section{Prefissi}
+I prefissi erano utili anni fa, ormai sono abbastanza inutili.
+
+\section{Interfacce e implementazione}
+Ci sono due scuole di pensiero:
+\begin{enumerate}
+	\item Interfaccia che inizia con I, implementazione senza decorazioni (IClasse, Classe)
+	\item Interfaccia senza decorazioni, implementazione con suffisso Imp (Classe, ClasseImp)
+\end{enumerate}
+
+É uguale.
+
+\section{Evitare il mapping mentale}
+Il significato dei nomi non deve essere chiaro solo a chi scrive ma anche a chi legge.
+
+\section{Nomi delle classi}
+Le classi dovrebbero essere nomi o frasi di sostantivi, evitare Manager, Processor, Data o Info. Una classe non dovrebbe essere un verbo
+
+\section{Nomi dei metodi}
+I nomi dovrebbero contenere un verbo che descrivere cosa fanno, ad esempio postPayment, deletePage o save.
+
+Accessori, mutatori e predicati dovrebbero iniziare con get, set e is.
+
+\section{Non usare nomignoli}
+Non chiamare variabili, metodi e classi con nomi che utilizzano inside joke, riferimenti culturali o battute. Chiamare la funzione delete() holyHandGranade non è simpatico, è un inferno.
+
+\section{Una parola per concetto}
+Scegli una parola che esprima un concetto e mantienila. Ad esempio scegli tra fetch, retrieve e get e poi usa solo quella, non alternare tra le tre.
+
+\section{Usare nomi del dominio di soluzione}
+
 
 \end{document}
