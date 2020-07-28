@@ -134,7 +134,33 @@ Non chiamare variabili, metodi e classi con nomi che utilizzano inside joke, rif
 \section{Una parola per concetto}
 Scegli una parola che esprima un concetto e mantienila. Ad esempio scegli tra fetch, retrieve e get e poi usa solo quella, non alternare tra le tre.
 
-\section{Usare nomi del dominio di soluzione}
+\section{Usare nomi del dominio della soluzione}
+Meglio usare nomi che hanno un significato speciale nel caso sia quello il caso. Ad esempio, dire AccountVisitor vuol dire molto se si è a conoscenza del pattern visitor. I nomi che usano un lessico tecnico sono comodi.
 
+\section{Usare nomi del dominio del problema}
+Nel caso non ci siano nomi immediati da utilizzare facenti parte del dominio della soluzione, allora possiamo iniziare a guardare il dominio del problema.
+
+\section{Aggiungere un contesto significativo}
+Solitamente è meglio avere nomi che si spieghino da soli, in certi casi, però, ciò è difficile. Prendiamo ad esempio firstName, lastName, street, houseNumber, city, state e zipcode. Assieme sappiamo che sono un indirizzo ma presi singolarmente? Se vedessimo state usato da un'altra parte? In questo caso, allora, può essere accettabile usare, ad esempio addrFirstName, addrLastName, addrStreet, addrHouseNumber, addrCity, addrState e addrZipcode.
+
+Non bisogna aggiungere del contesto a caso però, ad esempio dando a tutte le variabili un prefisso che descriva l'app.
+
+\chapter{Funzioni}
+La maggior parte delle regole di scrittura per le funzioni sono le stesse descritte dalle buone norme del \href{https://refactoring.guru/refactoring/techniques}{refactoring}.
+
+\section{Corte}
+Le funzioni dovrebbero essere lunghe massimo intorno alle 20 righe, nulla vieta di riuscire a ridurle ulteriormente però. Se è di più possiamo chiederci "è possibile estrarre una parte della funzione"?
+
+Ad esempio la funzione
+\lstinputlisting[language=]{code/012}\label{code: 012}
+è riscrivibile come
+\lstinputlisting[language=]{code/013}\label{code: 013}
+
+\subsection{Blocchi e indentazione}
+Se possibile sarebbe meglio ridurre i blocchi di indentazione a una sola linea, come abbiamo visto nel codice precedente, e possibilmente che chiami un'altra funzione per svolgere le sue funzioni.
+
+Tutto ciò rende il codice snello e leggibile
+
+\section{Fare una sola cosa}
 
 \end{document}
