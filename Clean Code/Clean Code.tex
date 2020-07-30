@@ -162,5 +162,150 @@ Se possibile sarebbe meglio ridurre i blocchi di indentazione a una sola linea, 
 Tutto ciò rende il codice snello e leggibile
 
 \section{Fare una sola cosa}
+Un metodo non deve fare tutto e male ma solo una cosa e farla bene. Un metodo che si occupa di una sequenza di passi avrà richiami a metodi che eseguono le subroutine ma non avrà altra logica al suo interno.
+
+Se in una funzione vediamo più sezioni come dichiarazione, inizializzazione e scrematura come possiamo vedere qua
+\lstinputlisting[language=]{code/014}\label{code: 014}
+vuol dire che probabilmente possiamo scomporla ulteriormente.
+
+\section{Un livello di astrazione per funzione}
+Ci si deve assicurare che una funzione sia ad un solo livello di astrazione. Non dovremmo mai avere funzioni ad alto livello di astrazione mischiate a codice a basso livello di astrazione, crea solo confusione e non rispetta il principio di responsabilità.
+
+\subsection{Leggere il codice dall'alto verso il basso}
+Primo avviso: questo si applica solo a linguaggi compilati e a linguaggi che si occupano dell'analisi di tutto il codice prima dell'esecuzione. In un linguaggio interpretato questa regola non si applica in quanto le funzioni devono essere descritte bottom-top.
+
+Come regola di base dovremmo poter leggere il codice come una narrativa, dalla funzione principale a quelle ausiliarie, scendendo sempre più tra i vari livelli di astrazione.
+
+\section{Controlli di flusso}
+É difficile mantenere brevi gli switch e gli if/else. Possiamo però separare lo switch in una classe di basso livello e non vederlo mai ripetuto.
+
+Consideriamo questo codice
+\lstinputlisting[language=]{code/015}\label{code: 015}
+\begin{enumerate}
+	\item è già grande e crescerà ancora di più all'aumentare delle tipologie di dipendenti
+	\item fa più d una cosa
+	\item viola il principio di singola responsabilità
+	\item viola il principio open close\footnote{Le entità dovrebbero essere aperte per l'estensione, chiuse per le modifiche} perchè deve essere cambiata per ogni modifica nel dataset
+\end{enumerate}
+
+La soluzione a questo problema, ad esempio, è una \href{https://refactoring.guru/design-patterns/abstract-factory}{abstract factory}. La factory passerà l'istanza dei dipendenti e i vari metodi sono creati polimorficamente usando le interfacce.
+
+Una regola possibile è che gli switch:
+\begin{enumerate}
+	\item devono compararire solo una volta
+	\item devono sfruttare il polimorfismo
+	\item devono essere nascosti tramite ereditarietà
+\end{enumerate}
+\lstinputlisting[language=]{code/016}\label{code: 016}
+
+\section{Usare nomi descrittivi}
+Così come per le variabili, i nomi devono essere significativi. Meglio un nome lungo rispetto ad un nome che non spiega ciò che accade nel metodo.
+
+Importante è avere una naming convention, anche non scritta, in modo che i nomi siano consistenti e che siano facilmente interpretabili.
+
+\section{Argomenti delle funzioni}
+Il numero ideale di argomenti per le funzioni è 0. Uno va bene, due accettabile, tre già è strano, quattro o più richiede una giustificazione seria.
+
+\subsection{Forma comune per singolo argomento}
+Ci sono due ragioni per passare un argomento:
+\begin{itemize}
+	\item stai ponendo delle domande su di esso
+	\item stai operando su di esso
+\end{itemize}
+
+Un altra ragione è quella di generazione di un evento: il metodo ha in ingresso un argomento ma in uscita nessuno.
+
+\subsection{Argomenti di guardia}
+Sono brutti. Passare un boolean in una funzione come guardia per dire con che modalità eseguire la funzione è brutto a vedersi. Sarebbe meglio dividere la funzione in più metodi.
+
+\subsection{Funzioni con due argomenti}
+Una diade non per forza è negativa, ad esempio quando si crea un punto è necessario passare due variabili per gli assi x e y e ciò è giusto. Il problema è quando ci troviamo davanti ad altre forme come, ad esempio, \emph{assertEquals(expected, actual)}. Quale viene prima, quale dopo? Serve pratica perchè non c'è un ordine naturale.
+
+Le soluzioni sono svariate, ad esempio estrarre un campo e renderlo appartenente alla classe.
+
+\subsection{Oggetti come argomenti}
+Spesso se vengono passati due o tre argomenti, questi saranno legati in qualche modo, probabilmente in un oggetto. In quel caso è meglio pensare di passare l'oggetto direttamente. Ad esempio qua è visibile la differenza di lettura dei due metodi.
+\lstinputlisting[language=]{code/017}\label{code: 017}
+
+\subsection{Lista come argomento}
+L'utilizzo delle liste opzionali di argomenti è molto comodo e in certi casi aiuta a tenere pulito il codice. Ad esempio
+\lstinputlisting[language=]{code/018}\label{code: 018}
+A tutti gli effetti ha due argomenti ma a runtime può essere usato con infiniti argomenti.
+
+\subsection{Verbi e parole chiave}
+Usare una combinazione di verbi per le funzioni e sostantivi per gli argomenti può rendere le funzioni molto evocative. Ad esempio \emph{writeField(name)} subito fa capire che questo nome verrà scritto.
+
+Codificare le variabili nel nome del metodo è anche un metodo interessante per renderla autodescrittiva. Tornando all'\emph{assertEquals(expected, actual)} di prima, quando sarebbe più immediato e meno confusa la sequenza se si chiamasse \emph{assertExpectedEqualsActual(expected, actual)}?
+
+\section{Non devono avere effetti collaterali}
+Gli effetti collaterali sono bugie. Una funzione dovrebbe fare una e una sola cosa, nascondere un effetto collaterale, ovvero l'agire su di una variabile esterna al suo scope, è un modo di farle fare più cose.
+
+Ad esempio:
+\lstinputlisting[language=]{code/019}\label{code: 019}
+Qua evidentemente inizializza la sessione quando la funzione dovrebbe solo validare l'utente. Questo va contro il principio di singola resposabilità
+
+\section{Output}
+Certi nomi possono confondere, portando a chiedersi se stiano parlando dell'input o dell'output. Ad esempio \emph{appendFooter(s)} attacca s ad un footer o attacca un qualche footer ad s? Solo guardando la firma del metodo si scopre che
+\lstinputlisting[language=]{code/020}\label{code: 020}
+effettivamente attacca un footer al buffer passato.
+
+Quello che abbiamo appena fatto è un controllo secondario, un qualcosa che può interrompere il flusso di programmazione.
+
+In generale gli output dovrebbero essere evitati, se possibile è meglio far agire le funzioni sull'oggetto che le possiede.
+
+\section{Separazione dei comandi}
+Una funzione dovrebbe fare qualcosa o rispondere a qualcosa, non entrambe.
+
+\section{Preferire le eccezioni al ritornare direttamente messaggi di errore}
+Passare errori direttamente porta al doverli gestire subito, invece passare un'eccezione ha due benefici principali:
+\begin{itemize}
+	\item sono rapidi da usare e non si confonde ciò che può essere passato
+	\item possono essere messi in calce al percorso di esecuzione
+\end{itemize}
+
+\subsection{Estrarre i blocchi try/catch}
+Con ciò si vuole dire di non scrivere l'interno del blocco catch con tutti i suoi passaggi ma di portarlo fuori come metodo in modo da avere una struttura molto più compatta, leggibile e gestibile. Ricordiamo che le eccezioni vanno gestite il più vicino possibile alla fonte ma non per questo non possiamo mandarle alla funzione chiamante.
+\lstinputlisting[language=]{code/021}\label{code: 021}
+
+\subsection{La gestione dell'errore è una sola cosa}
+Le funzioni dovrebbero fare una sola cosa + la gestione dell'errore è una sola cosa = Una funzione che gestisce l'errore non dovrebbe fare altro. Ciò vuol dire che se in una funzione eiste la parola try dovrebbe essere la prima e niente dopo i blocchi catch e finally.
+
+\subsection{Error.java e la dipendenza da esso}
+Molti scrivono i messaggi di errore in una enumerazione da importare in ogni classe che la sfrutta. Risultato? Dipendenze ovunque ed essere costretti a modificare codice e ricompilare ogni volta.
+
+Creare eccezioni figlie della classe Error invece rende il codice meno codipendente e più manutenibile.
+
+\subsection{Non ripetersi}
+Mai ripetere funzioni, piuttosto meglio importarle ma scrivere più volte lo stesso codice porta a dover debuggare più volte e c'è il rischio di riparare da una parte e non dalle altre.
+
+\section{Programmazione strutturata}
+Molti programmatori seguono il principio di Dijkstra: ogni funzione e ogni blocco deve avere una sola entrata e una sola uscita. Ciò vuol dire:
+\begin{itemize}
+	\item un solo return
+	\item niente break o continue
+	\item mai un goto
+\end{itemize}
+
+Questa regola perde di valore quando le funzioni sono molto brevi, questo perchè una sovraingegnerizzazione in un piccolo blocco di codice rischia di oscurare il vero significato dietro al metodo.
+
+\section{Come si scrivono funzioni così?}
+Ricorda: primo passaggio è la stesura, il successivo la pulizia. Va bene scrivere codice leggibile solo da te all'inizio, non devi lasciarlo così poi. Poco alla volta puoi pulirlo, renderlo perfetto.
+
+\section{Esempio finale}
+\lstinputlisting[language=java]{code/022}\label{code: 022}
+
+\chapter{Commenti}
+I commenti possono essere molto utili come anche superflui. Se imparassimo a scrivere codice comprensibile non ci servirebbe minimamente scrivere commenti. Spesso vengono inseriti per sopperire ad una mancanza del linguaggio.
+
+Attenzione: commenti e documentazione non sono per niente la stessa cosa.
+
+Tutto ciò vuol dire che nel momento nel quale si sente il bisogno di scrivere un commento bisogna chiedersi: posso scrivere il codice in modo che non serva?
+
+Uno dei motivi principali di questa pratica è che il codice cambia, il commento spesso no.
+
+I commenti non correggono del pessimo codice!
+
+\section{Spiegati nel codice}
+
 
 \end{document}
