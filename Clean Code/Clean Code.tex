@@ -47,11 +47,11 @@ Ogni nome, che sia di variabile o di funzione, deve rispondere alle domande:
 Se un nome richiede un commento allora il nome è sbagliato.
 
 Ad esempio
-\lstinputlisting[language=]{code/001}\label{code: 001}
+\lstinputlisting[language=java]{code/001}\label{code: 001}
 d non dice molto come nome. Dovremmo scegliere un nome migliore, ad esempio
-\lstinputlisting[language=]{code/002}\label{code: 002}
+\lstinputlisting[language=java]{code/002}\label{code: 002}
 Scegliere un nome che rivela un intento rende molto più semplice cambiare e comprendere un codice. Ad esempio cosa fa questo pezzo di codice?
-\lstinputlisting[language=]{code/003}\label{code: 003}
+\lstinputlisting[language=java]{code/003}\label{code: 003}
 Il problema di questo codice non è la sua semplicità ma la sua capacità di avere un senso implicito. Ad esempio, le domande che ci possiamo porre sono:
 \begin{itemize}
 	\item[] Cos'è theList?
@@ -63,10 +63,10 @@ Il problema di questo codice non è la sua semplicità ma la sua capacità di av
 Queste risposte dovrebbero essere nel codice. Immaginiamo ora di lavorare a campo minato. Rinominiamo la lista con gameBoard.
 
 Ogni cella della board è rappresentata da un array, il valore alla posizione 0 è la posizione dello status della cella e se è 4 vuol dire "segnata". Già dando implicitamente queste notazioni possiamo migliorare il codice:
-\lstinputlisting[language=]{code/004}\label{code: 004}
+\lstinputlisting[language=java]{code/004}\label{code: 004}
 
 Possiamo andare anche oltre e scrivere una semplice classe per le celle invece di avere degli int. Può includere una funzione con un nome che ne sveli l'intento per nascondere questo numero. Il risultato è:
-\lstinputlisting[language=]{code/005}\label{code: 005}
+\lstinputlisting[language=java]{code/005}\label{code: 005}
 
 \section{Evitare la disinformazione}
 Mai usare parole che non descrivono la realtà, ad esempio usare accountList solo se effettivamente ci troviamo davanti ad una List.
@@ -77,14 +77,14 @@ Avere una naming convention consistente è essenziale. Un pessimo esempio di uso
 
 \section{Fare distinzioni significative}
 Evitare nomi con degli errori di battitura intenzionali perchè si vogliono nominare due variabili allo stesso modo. Evitare anche nomi che non danno informazioni, ad esempio:
-\lstinputlisting[language=]{code/006}\label{code: 006}
+\lstinputlisting[language=java]{code/006}\label{code: 006}
 
 Evitare nomi "che creano rumore", ad esempio ProductInfo e ProductData si differenziano per la seconda parola ma comunque non sappiamo cosa facciano.
 
 Il tipo di entità non dovrebbe mai essere contenuto nel nome. NameString non ha senso, non ci chiederemmo mai se un semplice Name possa essere un float, questo perchè il nome stesso ci informa del suo contenuto.
 
 Un esempio di confusione è:
-\lstinputlisting[language=]{code/007}\label{code: 007}
+\lstinputlisting[language=java]{code/007}\label{code: 007}
 Come potremmo mai sapere quale funzione chiamare dal suo nome?
 
 Distinguere sempre i nomi in modo da intuire immediatamente la loro funzione leggendoli.
@@ -93,17 +93,17 @@ Distinguere sempre i nomi in modo da intuire immediatamente la loro funzione leg
 Devi poterlo pronunciare. Hai mai provato a discutere della funzione della classe Genymdhms (generation date, year, month, day, hour, minute, and second)? Spero di no.
 
 Immaginiamo comparare questa classe
-\lstinputlisting[language=]{code/008}\label{code: 008}
+\lstinputlisting[language=java]{code/008}\label{code: 008}
 con questa
-\lstinputlisting[language=]{code/009}\label{code: 009}
+\lstinputlisting[language=java]{code/009}\label{code: 009}
 
 \section{Usare nomi ricercabili}
 Le variabili con nome di una singola lettera vanno bene solo come variabili locali di un metodo, mai in altro modo, sarebbe impossibile cercarle altrimenti.
 
 Compariamo
-\lstinputlisting[language=]{code/010}\label{code: 010}
+\lstinputlisting[language=java]{code/010}\label{code: 010}
 con
-\lstinputlisting[language=]{code/011}\label{code: 011}
+\lstinputlisting[language=java]{code/011}\label{code: 011}
 
 \section{Prefissi}
 I prefissi erano utili anni fa, ormai sono abbastanza inutili.
@@ -152,9 +152,9 @@ La maggior parte delle regole di scrittura per le funzioni sono le stesse descri
 Le funzioni dovrebbero essere lunghe massimo intorno alle 20 righe, nulla vieta di riuscire a ridurle ulteriormente però. Se è di più possiamo chiederci "è possibile estrarre una parte della funzione"?
 
 Ad esempio la funzione
-\lstinputlisting[language=]{code/012}\label{code: 012}
+\lstinputlisting[language=java]{code/012}\label{code: 012}
 è riscrivibile come
-\lstinputlisting[language=]{code/013}\label{code: 013}
+\lstinputlisting[language=java]{code/013}\label{code: 013}
 
 \subsection{Blocchi e indentazione}
 Se possibile sarebbe meglio ridurre i blocchi di indentazione a una sola linea, come abbiamo visto nel codice precedente, e possibilmente che chiami un'altra funzione per svolgere le sue funzioni.
@@ -165,7 +165,7 @@ Tutto ciò rende il codice snello e leggibile
 Un metodo non deve fare tutto e male ma solo una cosa e farla bene. Un metodo che si occupa di una sequenza di passi avrà richiami a metodi che eseguono le subroutine ma non avrà altra logica al suo interno.
 
 Se in una funzione vediamo più sezioni come dichiarazione, inizializzazione e scrematura come possiamo vedere qua
-\lstinputlisting[language=]{code/014}\label{code: 014}
+\lstinputlisting[language=java]{code/014}\label{code: 014}
 vuol dire che probabilmente possiamo scomporla ulteriormente.
 
 \section{Un livello di astrazione per funzione}
@@ -180,7 +180,7 @@ Come regola di base dovremmo poter leggere il codice come una narrativa, dalla f
 É difficile mantenere brevi gli switch e gli if/else. Possiamo però separare lo switch in una classe di basso livello e non vederlo mai ripetuto.
 
 Consideriamo questo codice
-\lstinputlisting[language=]{code/015}\label{code: 015}
+\lstinputlisting[language=java]{code/015}\label{code: 015}
 \begin{enumerate}
 	\item è già grande e crescerà ancora di più all'aumentare delle tipologie di dipendenti
 	\item fa più d una cosa
@@ -196,7 +196,7 @@ Una regola possibile è che gli switch:
 	\item devono sfruttare il polimorfismo
 	\item devono essere nascosti tramite ereditarietà
 \end{enumerate}
-\lstinputlisting[language=]{code/016}\label{code: 016}
+\lstinputlisting[language=java]{code/016}\label{code: 016}
 
 \section{Usare nomi descrittivi}
 Così come per le variabili, i nomi devono essere significativi. Meglio un nome lungo rispetto ad un nome che non spiega ciò che accade nel metodo.
@@ -225,11 +225,11 @@ Le soluzioni sono svariate, ad esempio estrarre un campo e renderlo appartenente
 
 \subsection{Oggetti come argomenti}
 Spesso se vengono passati due o tre argomenti, questi saranno legati in qualche modo, probabilmente in un oggetto. In quel caso è meglio pensare di passare l'oggetto direttamente. Ad esempio qua è visibile la differenza di lettura dei due metodi.
-\lstinputlisting[language=]{code/017}\label{code: 017}
+\lstinputlisting[language=java]{code/017}\label{code: 017}
 
 \subsection{Lista come argomento}
 L'utilizzo delle liste opzionali di argomenti è molto comodo e in certi casi aiuta a tenere pulito il codice. Ad esempio
-\lstinputlisting[language=]{code/018}\label{code: 018}
+\lstinputlisting[language=java]{code/018}\label{code: 018}
 A tutti gli effetti ha due argomenti ma a runtime può essere usato con infiniti argomenti.
 
 \subsection{Verbi e parole chiave}
@@ -241,12 +241,12 @@ Codificare le variabili nel nome del metodo è anche un metodo interessante per 
 Gli effetti collaterali sono bugie. Una funzione dovrebbe fare una e una sola cosa, nascondere un effetto collaterale, ovvero l'agire su di una variabile esterna al suo scope, è un modo di farle fare più cose.
 
 Ad esempio:
-\lstinputlisting[language=]{code/019}\label{code: 019}
+\lstinputlisting[language=java]{code/019}\label{code: 019}
 Qua evidentemente inizializza la sessione quando la funzione dovrebbe solo validare l'utente. Questo va contro il principio di singola resposabilità
 
 \section{Output}
 Certi nomi possono confondere, portando a chiedersi se stiano parlando dell'input o dell'output. Ad esempio \emph{appendFooter(s)} attacca s ad un footer o attacca un qualche footer ad s? Solo guardando la firma del metodo si scopre che
-\lstinputlisting[language=]{code/020}\label{code: 020}
+\lstinputlisting[language=java]{code/020}\label{code: 020}
 effettivamente attacca un footer al buffer passato.
 
 Quello che abbiamo appena fatto è un controllo secondario, un qualcosa che può interrompere il flusso di programmazione.
@@ -265,7 +265,7 @@ Passare errori direttamente porta al doverli gestire subito, invece passare un'e
 
 \subsection{Estrarre i blocchi try/catch}
 Con ciò si vuole dire di non scrivere l'interno del blocco catch con tutti i suoi passaggi ma di portarlo fuori come metodo in modo da avere una struttura molto più compatta, leggibile e gestibile. Ricordiamo che le eccezioni vanno gestite il più vicino possibile alla fonte ma non per questo non possiamo mandarle alla funzione chiamante.
-\lstinputlisting[language=]{code/021}\label{code: 021}
+\lstinputlisting[language=java]{code/021}\label{code: 021}
 
 \subsection{La gestione dell'errore è una sola cosa}
 Le funzioni dovrebbero fare una sola cosa + la gestione dell'errore è una sola cosa = Una funzione che gestisce l'errore non dovrebbe fare altro. Ciò vuol dire che se in una funzione eiste la parola try dovrebbe essere la prima e niente dopo i blocchi catch e finally.
@@ -306,6 +306,42 @@ Uno dei motivi principali di questa pratica è che il codice cambia, il commento
 I commenti non correggono del pessimo codice!
 
 \section{Spiegati nel codice}
+\lstinputlisting[language=java]{code/023}\label{code: 023}
+Questo codice ha un commento perchè non è chiaro cosa faccia. É molto più semplice racchiudere la logica in un metodo a parte il cui nome spieghi cosa accade e poi usarlo, come ad esempio
+\lstinputlisting[language=java]{code/024}\label{code: 024}
+Ora è molto più chiaro e prende anche meno spazio
 
+\section{Buoni commenti}
+Alcuni commenti sono utili.
+
+\subsection{Commenti legali}
+Non è insolito che le aziende chiedano di inserire all'interno del codice un header con dei commenti riguardanti il copyright.
+
+Questi commenti non dovrebbero essere contratti o lunghi quanto un libro di diritto. Dovrebbero rimandare alla licenza di riferimento, salvata da un'altra parte.
+
+\subsection{Commenti informativi}
+In certi casi è utile dare delle informazioni di base, per esempio la spiegazione di cosa ritorni un metodo
+\lstinputlisting[language=java]{code/025}\label{code: 025}
+Il problema è che certe informazioni andrebbero date, come sempre, tramite il nome della funzione. Ecco un caso leggermente migliore
+\lstinputlisting[language=java]{code/026}\label{code: 026}
+In questo caso il commento serve per dare la formattazione in maniera immediata
+
+\subsection{Spiegazione d'intento}
+In certi casi i commenti servono a spiegare quale fosse lo scopo di certe scelte di codice, ad esempio
+\lstinputlisting[language=java]{code/027}\label{code: 027}
+In questo modo lo sviluppatore rende nota la propria decisione e ciò che voleva raggiungere.
+
+\subsection{Chiarimenti}
+In certi casi è possibile scrivere commenti che spieghino al lettore una parte di codice 
+\lstinputlisting[language=java]{code/028}\label{code: 028}
+Chiaramente i commenti potrebbero essere sbagliati, per questo vanno presi con attenzione.
+
+\subsection{Avvisare delle conseguenze}
+In certi casi è meglio avvisare cosa accade usando certe feature, ad esempio
+\lstinputlisting[language=java]{code/029}\label{code: 029}
+
+\subsection{TODO}
+\lstinputlisting[language=java]{code/030}\label{code: 030}
+I todo sono comodi anche per capire perchè non bisogna fucilare il creatore di un metodo del genere. Sono un promemoria per noi e un avviso per gli altri.
 
 \end{document}

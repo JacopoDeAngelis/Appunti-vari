@@ -1,0 +1,8 @@
+public static SimpleDateFormat makeStandardHttpDateFormat()
+{
+  //SimpleDateFormat is not thread safe,
+  //so we need to create each instance independently.
+  SimpleDateFormat df = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z");
+  df.setTimeZone(TimeZone.getTimeZone("GMT"));
+  return df;
+}
