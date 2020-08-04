@@ -344,4 +344,92 @@ In certi casi è meglio avvisare cosa accade usando certe feature, ad esempio
 \lstinputlisting[language=java]{code/030}\label{code: 030}
 I todo sono comodi anche per capire perchè non bisogna fucilare il creatore di un metodo del genere. Sono un promemoria per noi e un avviso per gli altri.
 
+
+\subsection{Aplificazione}
+I commenti possono essere usati per esprimere l'importanza di parti non triviali o la cui importanza non è immediata.
+\lstinputlisting[language=java]{code/031}\label{code: 031}
+
+\subsection{Javadoc o simili}
+Documentare in maniera corretta, utile e sufficiente tutto tramite le funzioni di documentazione è cosa buona e giusta. Ovviamente anche queste devono essere scritte bene ma possono contenere errori certe volte.
+
+\section{Pessimi commenti}
+\subsection{Ragionamenti generici}
+\lstinputlisting[language=java]{code/032}\label{code: 032}
+Ad esempio qua la fretta ha fatto sì che l'autore lasciasse un commento non chiaro. Chi è che carica i default? Quali sono i default? cc.
+
+\subsection{Commenti ridondanti}
+\lstinputlisting[language=java]{code/033}\label{code: 033}
+Ad esempio qua il commento è già chiaro da ciò che c'è scritto nel metodo. Spesso un commento ridondante deriva dall'aver già scritto codice chiaro ma volerlo comunque commentare per paura.
+
+\subsection{Commenti fuorvianti}
+In certi casi, per puro errore umano, nonostante le buone intenzioni, si possono lasciare commenti fuorvianti. Anche un piccolo errore nella spiegazione del flusso dei dati può creare gravi problemi.
+
+\subsection{Commenti obbligatori}
+É ridicolo avere una regola che prescriva di scrivere per ogni funzione un javadoc o simili. 
+
+\subsection{Commenti giornali}
+In certi casi gli sviluppatori scrivono un giornale delle modifiche con data e cos'è stato fatto. É inutile, non aggiunge informazioni e diventa ancora più inutile coi sistemi di versionamento.
+
+\subsection{Commenti di rumore}
+Sono i commenti che non hanno nemmeno uno scopo, occupano spazio e basta.
+
+\subsection{Rumore spaventoso}
+C'è di peggio, ci sono i commenti che fanno ciò che devono ma che sono completamente inutili e poi ci sono quelli anche sbagliati.
+
+\subsection{Indicatori per le parti}
+Un commento tipo
+\lstinputlisting[language=java]{code/034}\label{code: 034}
+per indicare un blocco di codice è utile ad una prima vista ma in realtà se il codice è ben compartimentato non c'è da preoccuparsi per qualcosa del genere.
+
+\subsection{Commenti per chiudere i blocchi}
+\lstinputlisting[language=java]{code/035}\label{code: 035}
+Questo modo di chiudere i blocchi per rendere più evidente a cosa si riferiscano è diventato completamente inutile grazie alle IDE. In più se un blocco è così vasto da non poterne riconoscere la fine, forse è meglio applicare un po' di refactoring.
+
+\subsection{Attribuzione}
+Scrivere in un commento l'autore di una parte di codice è inutile ed è reso semplice dal versionamento
+
+\subsection{Codice rimosso tramite commento}
+Eliminare del codice commentandolo, quindi in realtà lasciandolo in bella mostra, è rischioso, crea spreco di spazio e memoria e si accumula come pochi. Il versionamento aiuta a ricordare il codice cancellato, è inutile questa prassi.
+
+\subsection{Commenti HTML}
+\lstinputlisting[language=java]{code/036}\label{code: 036}
+No.
+
+\subsection{Informazione non locale}
+Un commento è buono se si riferisce alla sua prossimità, fare riferimento a codice da altre parti è sbagliato.
+
+\subsection{Troppe informazioni}
+Non essere logorroico.
+
+\subsection{Connessioni non ovvie}
+\lstinputlisting[language=java]{code/037}\label{code: 037}
+Ad esempio qua cos'è un byte filtro? Si collega al +1 o al *3?
+
+Se un commento richiede una spiegazione allora è un pessimo commento
+
+\subsection{Javadocs in codice non pubblico}
+Se il codice deve essere acceduto dall'esterno allora va bene che sia commentato, altrimenti è superfluo.
+
+\chapter{Formattazione}
+\section{Formattazione verticale}
+Il livello di dettaglio di una classe dovrebbe aumentare discendendo.
+\begin{itemize}
+	\item costanti
+	\item variabili
+	\item costruttori
+	\item metodi pubblici
+	\item metodi privati
+	\item getter e setter
+\end{itemize}
+
+\section{Separazione delle parti}
+Gli spazi tra i blocchi di codice sono utili per discriminare le parti del codice. L'apertura verticale separa i concetti.
+
+\section{Associazione delle parti}
+La densità verticale implica associazione, quindi le linee che verticalmente sono dense esprimono concetti legati
+
+Se una parte ne chiama un'altra allora dovrebbero essere verticalmente vicine.
+
+
+
 \end{document}
