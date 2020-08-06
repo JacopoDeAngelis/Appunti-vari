@@ -422,14 +422,92 @@ Il livello di dettaglio di una classe dovrebbe aumentare discendendo.
 	\item getter e setter
 \end{itemize}
 
-\section{Separazione delle parti}
+\subsection{Separazione delle parti}
 Gli spazi tra i blocchi di codice sono utili per discriminare le parti del codice. L'apertura verticale separa i concetti.
 
-\section{Associazione delle parti}
+\subsection{Associazione delle parti}
 La densità verticale implica associazione, quindi le linee che verticalmente sono dense esprimono concetti legati
 
 Se una parte ne chiama un'altra allora dovrebbero essere verticalmente vicine.
 
+\section{Formattazione orizzontale}
+Una volta il limite era 80 ma con gli schermi odierni il limite può essere alzato anche a 120. La regola da seguire, idealmente, è che a font standard non si debba mai scorrere a in orizzontale sullo schermo.
+
+\subsection{Apertura orizzontale e densità}
+Tra operatori e parti lo spazio serve, nella dichiarazione o nella chiamata di una funzione lo spazio tra nome della funzione e parentesi no, questo perchè sono strettamente legate.
+
+\subsection{Allineamento orizzontale}
+L'indentazione serve per rendere evidenti i blocchi di codice, aiutando così nella loro identificazione.
+
+\section{Regole del gruppo}
+Tutti abbiamo delle regole preferite ma se si lavora in gruppo allora si deve concordare su di uno stile unificato. Queste regole devono essere seguite e documentate.
+
+\chapter{Oggetti e strutture dati}
+\section{Astrazione}
+Guardiamo i due listati seguenti. Entrambi rappresentano un punto del piano cartesiano, uno espone completamente la sua implementazione, l'altro lo nasconde.
+\lstinputlisting[language=java]{code/038}\label{code: 038}
+\lstinputlisting[language=java]{code/039}\label{code: 039}
+La seconda classe nasconde come vengono salvate le sue variabili e, soprattutto, crea delle regole d'accesso ai dati. 
+
+\section{Asimmetria dati/oggetti}
+La differenza è:
+\begin{itemize}
+	\item gli oggetti nascondono i dati ed espone funzioni
+	\item le strutture dati espongono i dati e non hanno funzioni significative
+\end{itemize}
+
+\section{Legge di Demetra}
+\begin{itemize}
+	\item ogni unità di programma dovrebbe conoscere solo poche altre unità di programma strettamente correlate
+	\item ogni unità di programma dovrebbe interagire solo con le unità che conosce direttamente
+\end{itemize}
+
+Ovvero, data una classe C con un metodo f, questo metodo dovrebbe chiamare solo:
+\begin{itemize}
+	\item C
+	\item Un oggetto creato da f
+	\item Un oggetto passato come argomento ad f
+	\item Un oggetto in un'istanza di C
+\end{itemize}
+
+\subsection{Incidenti ferroviari}
+\lstinputlisting[language=java]{code/040}\label{code: 040}
+Questo tipo di codice è chiamato incidente ferroviario perchè sembrano due treni che si sono scontrati e si sono accartocciati fino a diventare una cosa sola.
+
+Questo stile di programmazione è da evitare, sarebbe meglio dividere le chiamate così
+\lstinputlisting[language=java]{code/041}\label{code: 041}
+
+Se questo insieme viola la legge di Demetra dipende se ctxt, Options e ScratchDir sono oggetti o strutture dati. Se sono oggetti, le loro strutture interne dovrebbero essere nascoste e quindi la conoscenza dell'interno è chiaramente una violazione della legge. Se sono strutture dati senza comportamenti, allora esporranno naturalmente le loro strutture interne, e quindi la legge non si applica.
+
+\subsection{Ibridi}
+Certe volte vengono create classi che sono anche strutture dati, presentano varaibili pubbliche e private, accessori di ogni tipo e funzioni significative. Sono da evitare, è un caso di \href{https://refactoring.guru/smells/feature-envy}{"feature envy"}, ovvero metodi che chiamano funzioni o attributi di altre classi più della propria.
+
+\subsection{Nascondere le strutture}
+Se comunichiamo con un oggetto dovremmo dirgli di fare qualcosa, non dovremmo chiedere i suoi dettagli interni.
+
+Ad esempio, nel caso delle chiamate di prima, ottenevamo il percorso assoluto di un file, un errore gigantesco. In più cosa dobbiamo farci? Se volessimo creare un nuovo file non sarebbe meglio fare così?
+\lstinputlisting[language=java]{code/042}\label{code: 042}
+In questo modo i dettagli sull'implementazione sarebbero nascosti.
+
+\section{Data Transfer Object (DTO)}
+un DTO è una struttura dati molto utile, specialmente quando si comunica col database o si devono elaborare dei dati prima di presentarli. I loro campi sono pubblici e utilizzabili.
+
+Sono comuni anche i "bean", oggetti con variabili private ma con getter e setter.
+\lstinputlisting[language=java]{code/043}\label{code: 043}
+
+\subsection{Active records}
+Sono tipi speciali di DTO. Hanno strutture dati con variabili pubbliche o accessibili ma solitamente hanno metodi come salva e trova. Spesso sono traduzioni dirette del database.
+
+\chapter{Gestione errori}
+La gestione errori è importante ma se offusca la logica allora c'è un problema.
+
+\section{Usare le eccezioni invece del return}
+Una volta, quando non c'era una gestione delle eccezioni come ora, si usavano dei flag per segnalare gli errori. Al giorno d'oggi possono essere sollevate eccezioni che rendono la vita molto più semplice e, soprattutto, possono rendere il codice più comprensibile.
+
+\section{Scrivere il blocco Try-Catch-Finally prima di tutto}
+Il blocco catch deve permettere l'uscita dal metodo in uno stato consistente, indipendentemente da cosa sia successo nel try.
+
+\section{Usare eccezioni non controllate}
 
 
 \end{document}
