@@ -508,6 +508,64 @@ Una volta, quando non c'era una gestione delle eccezioni come ora, si usavano de
 Il blocco catch deve permettere l'uscita dal metodo in uno stato consistente, indipendentemente da cosa sia successo nel try.
 
 \section{Usare eccezioni non controllate}
+Le eccezioni controllate violano il principio Open/closed perchè creano più uscite. Se si solleva un'eccezione e viene mandata tre livelli sopra allora si dovrà inserire nell'intestazione di tutti i metodi della catena.
+
+\section{Offrire un contesto con le eccezioni}
+Le eccezioni dovrebbero offrire abbastanza informazioni da consentire di comprendere cosa le abbia scatenate. Lo stacktrace è utile ma non è l'unica fonte, anche un messaggio significativo è ottimo.
+
+\section{Definire le classi di eccezioni in termini dei bisogni del chiamante}
+Ci sono molti modi per classificare gli errori. Possiamo classificarli dalla loro fonte o per il loro tipo. La cosa, però, realmente più importante in questo contesto è "come sono catturati"?
+
+Ora vediamo un esempio di pessima classificazione in una libreria:
+\lstinputlisting[language=java]{code/044}\label{code: 044}
+
+Questo blocco di codice contiene molte ripetizioni. In questo caso possiamo racchiudere le eccezioni in un tipo generico che però contenga una descrizione dell'errore. 
+
+\lstinputlisting[language=java]{code/045}\label{code: 045}
+Rinchiudere in un wrapper le eccezioni derivanti da una libreria di terze parti può essere molto comodo. In più permette di non dover dipendere dalle scelte di design di qualcun altro.
+
+\section{Non ritornare null}
+Mai e poi mai ritornare null. Rendere un programma null safe è essenziale per evitare la maggior parte degli errori.
+
+Usare un optional o, ad esempio, una emptyList, sono metodi per poter permettere al flow del programma di non incontrare una NullPointerException.
+
+\chapter{Limiti}
+\section{Usare codice di terze parti}
+Speso nella scrittura del codice da poter implementare da terze parti si pensa all'uso più generico possibile che può essere fatto mentre l'utente ha bisogno di un uso specifico. In cosa si traduce questo? Nel dover pensare a come rendere specifico questo codice per evitare problemi. Ad esempio
+\lstinputlisting[language=java]{code/046}\label{code: 046}
+Il codice non è perfettamente leggibile, il typecast è una pezza messa alla generalità della mappa. Potrebbe essere risolto rendendo specifica la mappa
+\lstinputlisting[language=java]{code/047}\label{code: 047}
+Ma in questo caso non verrebbe risolto un problema essenziale: Map fornisce più funzioni di quelle che vogliamo, tra cui clear, attivabile da chiunque. Come possiamo allora nascondere questo problema implementativo? Semplice, mascherandolo in una classe apposita che si occupi di typecast, gestione degli accessi ecc.
+\lstinputlisting[language=java]{code/048}\label{code: 048}
+In questo modo l'utente non deve preoccuparsi di certi dettagli implementativi, di dover stare attento a cosa venga ritornato ecc. ma invece può usare in maniera naturale la classe Sensor.
+
+\section{Esplorare e comprendere i confini}
+Quando ci si trova a implementare una libreria di terze parti si possono passare giorni a leggerne la documentazione ma non è detto che ciò che si pensa faccia la libreria e ciò che fa veramente siano la stessa cosa. Per questo motivo, prima di generare bug complicati, sarebbe meglio creare delle suite di test per testare le funzioni richieste alla libreria e vedere se il comportamento atteso è quello effettivo o no. Questo metodo, per quanto tedioso, può risparmiare molto tempo più avanti.
+
+\subsection{Conoscere log4j e slf4j}
+Per fare un esempio, uno potrebbe pensare "beh, se inizializzo il logger e dico di loggare sono a posto" e invece no
+\lstinputlisting[language=java]{code/049}\label{code: 049}
+Questo codice restituisce un errore in quanto il Logger ha bisogno di un appender. Allora viene aggiunto ciò
+\lstinputlisting[language=java]{code/050}\label{code: 050}
+
+Ma a quanto pare ha bisogno di un output stream, allora aggiungiamo
+\lstinputlisting[language=java]{code/051}\label{code: 051}
+E ora funziona! Ora però rimuovendo l'output stream continua a funzionare ma non rimuovendo il pattern, strano. Studiando ancora la configurazione scopriamo che semplicemente il Logger non era configurato, cosa che non è altamente intuitiva. Ancora un po' di ricerca e raggiungiamo questa classe di test che rappresenta la conoscenza acquisita
+\lstinputlisting[language=java]{code/052}\label{code: 052}
+
+\section{I test di apprendimento sono ottimi}
+Questi test, oltre a darci un'ottima conoscenza la prima volta, ci permettono di tenere sotto controllo anche eventuali aggiornamenti. Infatti ad ogni nuova release ci basta far partire nuovamente i test per controllare che tutto sia come prima. In questo modo abbiamo anche un ottimo rientro sull'investimento.
+
+\chapter{Unit test}
+\section{Le tre leggi del test driven development}
+\begin{enumerate}
+	\item Non scriverai codice in produzione fino a quando non avrai scritto il codice per testarlo
+	\item Non scriverai più di un test che debba fallire e la non compilazione è un fallimento
+	\item Non scriverai più codice di quanto non sia strettamente necessario per passare il test
+\end{enumerate}
+
+\section{Mantenere i test puliti}
+Non bisogna minimamente pensare che i test non debbano essere scritti con meno cura rispetto al codice originale
 
 
 \end{document}

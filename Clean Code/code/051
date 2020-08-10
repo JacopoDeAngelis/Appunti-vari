@@ -1,0 +1,9 @@
+@Test
+public void testLogAddAppender() {
+  Logger logger = Logger.getLogger("MyLogger");
+  logger.removeAllAppenders();
+  logger.addAppender(new ConsoleAppender(
+    new PatternLayout("%p %t %m%n"),
+    ConsoleAppender.SYSTEM_OUT));
+  logger.info("hello");
+}
