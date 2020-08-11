@@ -411,7 +411,7 @@ Se un commento richiede una spiegazione allora è un pessimo commento
 Se il codice deve essere acceduto dall'esterno allora va bene che sia commentato, altrimenti è superfluo.
 
 \chapter{Formattazione}
-\section{Formattazione verticale}
+\section{Formattazione verticale} \label{par: formattazioneVerticale}
 Il livello di dettaglio di una classe dovrebbe aumentare discendendo.
 \begin{itemize}
 	\item costanti
@@ -565,7 +565,86 @@ Questi test, oltre a darci un'ottima conoscenza la prima volta, ci permettono di
 \end{enumerate}
 
 \section{Mantenere i test puliti}
-Non bisogna minimamente pensare che i test non debbano essere scritti con meno cura rispetto al codice originale
+Non bisogna minimamente pensare che i test non debbano essere scritti con meno cura rispetto al codice originale.
+
+\section{I test abilitano la flessibilità del codice}
+Quando modifichiamo del codice possiamo avere paura di introdurre bug inattesi. L'avere degli unit test pronti per controllare che non vengano introdotti bug inaspettati è ciò che ci permette di rendere il nostro codice flessibile, riutilizzabile, mantenibile, senza avere preoccupazioni aggiuntive.
+
+\section{Test puliti}
+La caratteristica più importante di un test è che sia leggibile. Ad esempio, guardiamo questi test:
+\lstinputlisting[language=java]{code/053}\label{code: 053}
+Guardiamo ad esempio PathParser. Trasforma la stringa in un'istanza usata dal crawler. QUesta trasformazione è inutile per quanto riguarda il test.
+
+Ora vediamo un miglioramento:
+\lstinputlisting[language=java]{code/054}\label{code: 054}
+è molto più semplice da leggere, il pattern build-operate-check rende ovvia la struttura del test: ogni test è diviso in tre fasi, nella prima si costruiscono i dati di test, nella seconda si opera su di essi, nella terza si testano.
+
+\section{Doppio standard}
+Ci si deve sempre ricordare una cosa: l'ambiente locale e l'ambiente di produzione hanno esigenze e capacità completamente differenti. Ad esempio in produzione il codice deve essere efficiente, deve richiedere le risorse minime necessarie e deve essere rapido. Sull'ambiente locale, dove i test saranno fatti girare, non ci sono spesso questi limiti. Per questo quando scriviamo codice dobbiamo sempre chiederci "dove verrà usato?".
+
+\section{Un assert per test}
+Un test non deve testare vari stati male, ne deve testare uno bene, un po' come per le funzioni che devono effettuare solo una cosa. Il vantaggio di ciò è la leggibilità.
+
+\section{Un solo concetto per test}
+Una regola ancora migliore, da cui la precedente deriva come ovvia conseguenza, è che ogni test dovrebbe testare un solo concetto alla volta.
+
+\section{F.I.R.S.T.}
+\begin{itemize}
+	\item[] \textbf{Fast}: i test dovrebbero essere veloci da eseguire, questo perchè se sono lenti non si è portati ad eseguirli spesso, il che può portare a non risolverli velocemente
+	\item[] \textbf{Indipendenti}: i test non dovrebbero dipendere dagli altri, ogni test dovrebbe essere atomico e non avere effetti collaterali per gli altri 
+	\item[] \textbf{Ripetibile}: dovrebbero essere eseguibili in ogni ambiente  
+	\item[] \textbf{Auto validante}: Il test dovrebbe avere un output booleano, ovvero lo passa o non lo passa 
+	\item[] \textbf{Tempestivo}: i test dovrebbero essere scritti appena prima che il codice venga scritto 
+\end{itemize}
+
+\chapter{Classi}
+\section{Organizzazione}
+Le classi, secondo la convenzione Java, seguono l'ordine descritto a pagina \pageref{par: formattazioneVerticale}.
+
+\subsection{Incapsulamento}
+Le variaibli e i metodi ausiliari dovrebbero essere privati, al massimo protetti se ne abbiamo bisogno all'interno della suite di test.
+
+\section{Le classi dovrebbero essere piccole}
+Una classe con, ad esempio, 70 metodi pubblici, forse è un po' troppo, arriva a livello di \href{https://en.wikipedia.org/wiki/God_object}{God class}, ovvero una classe con fin troppe responsabilità.
+
+\section{Principio di singola responsabilità}
+Ogni classe dovrebbe avere una sola responsabilità e un solo motivo per cambiare. Ad esempio
+\lstinputlisting[language=java]{code/055}\label{code: 055}
+In questo caso la classe ha due ragioni per cambiare:
+\begin{enumerate}
+	\item controlla le informazioni che devono essere aggiornate ogni volta che il software viene rilasciato
+	\item gestisce i componenti Java Swing
+\end{enumerate}
+
+Questa versione è decisamente meglio
+\lstinputlisting[language=java]{code/056}\label{code: 056}
+Questo rende le classi più indipendenti, più modellabili e permette di gestire meglio l'intero progetto.
+
+\subsection{Coesione e dipendenza}
+\begin{figure}[h!]
+	\begin{center}
+		\includegraphics[scale=0.6]{img/002.png}
+		\caption{Legami e coesione}
+		\label{fig: 002}
+	\end{center}
+\end{figure}
+Per spiegare la differenza, la coesione rappresenta la forza del modulo, quanto esso possa fare e come venga effettuato. I legami (o dipendenza) è come i vari moduli interagiscono tra di loro.
+Idealmente noi vorremmo alta coesione e passa dipendenza.
+
+All'interno del modulo con alta coesione abbiamo un'alta dipendenza tra le classi, per mantenerla efficacemente possiamo dividere il programma in molte piccole classi che abbiano una singola responsabilità e che si richiamino tra di loro.
+
+\section{Organizzare per un cambiamento}
+Quando scriviamo una classe possiamo anche non implementarla subito perchè magari non abbiamo ancora i dettagli implementativi o perchè serve solo come placeholder per il momento. Ad esempio questa classe per la gestione SQL:
+\lstinputlisting[language=java]{code/057}\label{code: 057}
+Quando ci troveremo ad implementarla, però, potremo ragionare sul suo design. Sembra una classe che effettivamente segua il principio di responsabilità all'inizio ma poi, quando guardiamo meglio, sembra che ci siano dei metodi privati che vadano in realazione solo con il metodo select, è quindi un piccolo subset di comportamenti.
+
+In più leggere questa classe richiede tempo, è voluminosa e ha svariate funzioni. Se invece prendessimo un approccio diverso, ovvero più frazionato ma che rispetti appieno il principio di singola responsabilità?
+\lstinputlisting[language=java]{code/058}\label{code: 058}
+Ora abbiamo, invece di una singola classe con metodi diversificati e metodi usati solo da alcuni di questi, un gruppo di classi che rispettano sia il principio di singola responsabilità sia quello dell'open close. In questo modo è anche più testabile, meno prono ad errori di diffusione.
+
+\chapter{Sistemi}
+\section{Separare il costruire un sistema dall'usarlo}
+
 
 
 \end{document}
