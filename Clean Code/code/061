@@ -1,0 +1,19 @@
+public class VacationPolicy {
+  public void accrueUSDivisionVacation() {
+    // code to calculate vacation based on hours worked to date
+    // ...
+    // code to ensure vacation meets US minimums
+    // ...
+    // code to apply vaction to payroll record
+    // ...
+  }
+  
+  public void accrueEUDivisionVacation() {
+    // code to calculate vacation based on hours worked to date
+    // ...
+    // code to ensure vacation meets EU minimums
+    // ...
+    // code to apply vaction to payroll record
+    // ...
+  }
+}

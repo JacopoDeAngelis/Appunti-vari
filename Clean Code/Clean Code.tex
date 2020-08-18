@@ -644,6 +644,81 @@ Ora abbiamo, invece di una singola classe con metodi diversificati e metodi usat
 
 \chapter{Sistemi}
 \section{Separare il costruire un sistema dall'usarlo}
+\subsection{Separazione del Main}
+Nel Main possiamo costruire i vari moduli che poi verranno passati alla nostra applicazione, in questo modo il flow è molto più controllabile.
+
+\subsection{Factory}
+Le factory possono essere utilizzate per creare oggetti quando richiesto ma senza doverne inserire la costruzione all'interno del codice principale.
+
+\subsection{Dependecy injection}
+Alla base di ciò c'è l'inversione di controllo, ovvero muove le repsonsabilità secondarie da un oggetto ad un altro il cui scopo è gestire ciò. Un oggetto non dovrebbe occuparsi del gestire le sue dipendenze. Ad esempio, durante l'inizializzazione non si chiede per le dipendenze ma sarà il sistema a fornirle direttamente.
+
+\chapter{Emergenza}
+Secondo Kent Beck ci sono quattro regole che permettono di scrivere un software progettato correttamente e il cui uso possa emergere nella lettura.
+\begin{enumerate}
+	\item Far girare tutti i test
+	\item Non deve contenere duplicazioni
+	\item Esprime le intenzioni del programmatore
+	\item Minimizza il numero di classi e metodi
+\end{enumerate}
+
+\section{Regola numero 1: Far girare tutti i test}
+Un sistema che passa tutti i test è un sistema testabile e che lavora come richiesto.
+
+Troppe dipendenze rende difficile creare test.
+
+\section{Regole 2-4: refactoring}
+Ora che abbiamo un codice testabile possiamo raffinarlo senza la paura di non notare un errore che spacchi tutto.
+
+\section{Niente duplicazioni}
+Ogni duplicazione di codice è un errore per due motivi:
+\begin{itemize}
+	\item è uno spreco cognitivo
+	\item se un bug insorge da una parte e viene corretto solo lì, le altre rimarranno scoperte
+\end{itemize}
+
+In certi casi la duplicazione non è evidente fino a quando non si ragiona:
+\lstinputlisting[language=java]{code/059}\label{code: 059}
+è uno spreco in quanto si può tranquillamente scrivere
+\lstinputlisting[language=java]{code/060}\label{code: 060}
+
+Il \href{https://refactoring.guru/design-patterns/template-method}{design pattern template} è un metodo usato tipicamente per rimuovere le duplicazioni ad alto livello:
+\lstinputlisting[language=java]{code/061}\label{code: 061}
+
+\section{Espressività}
+Tutto ciò che è stato detto fino ad ora sono consigli su come rendere il codice espressivo:
+\begin{itemize}
+	\item scegliere nomi espressivi
+	\item creare metodi brevi e semplici
+	\item usare nomenclatura standard se esiste, ad esempio strategy
+	\item scrivere unit test comprensibili
+\end{itemize}
+
+\section{Classi e metodi minimali}
+Cercare di tenere tutto di lunghezza ragionevole permette di capire l'atomicità delle azioni effettuate al loro interno, in questo modo è anche più semplice seguire il flusso, soprattutto con nomi corretti e autoesplicativi.
+
+\chapter{Concorrenza}
+La concorrenza è sempre difficile, sia scriverela bene e senza che si rompa. Ci sono una serie di raccomandazioni per cercare di renderla più semplice.
+
+\section{Miti ed errori concettuali}
+\subsection{La conccorenza migliora sempre le performance}
+Non sempre, solo se c'è tanto tempo d'attesa che i thread possono condividere
+
+\subsection{Il design non cambia quando si scrive un programma concorrente}
+Un algoritmo classico è molto differente se creato in maniera concorrente. La divisione di cosa debba essere fatto e quando ha solitamente un forte effetto sul design
+
+\subsection{Comprendere i problemi di concorrenza non è importante quando si lavora ad esempio su di una rete}
+In realtà sapere cosa potrebbe bloccarlo è essenziale
+
+\subsection{Cose vere}
+\begin{itemize}
+	\item la concorrenza crea dell'overhead in performance e codice
+	\item La concorrenza è complessa per ogni problema
+	\item i bug derivanti dalla concorrenza non sono spesso ripetibili, quindi sono spesso ignoranti come casi isolati
+	\item la concorrenza spesso richiede un cambio fondamentale di design
+\end{itemize}
+
+\section{Sfide}
 
 
 
