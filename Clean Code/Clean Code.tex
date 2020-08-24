@@ -719,7 +719,148 @@ In realtà sapere cosa potrebbe bloccarlo è essenziale
 \end{itemize}
 
 \section{Sfide}
+Immaginiamo che questo pezzo di codice sia condiviso tra due thread:
+\lstinputlisting[language=java]{code/062}\label{code: 062}
+Non sappiamo in che ordine due thread toccheranno lastIdUsed, questo perchè le elaborazioni di due thread possono seguire differenti percorsi. Potremmo trovarci quindi in una situazione nella quale due thread toccano allo stesso momento lastIdUsed e così generano un problema di coerenza.
 
+\section{Principi per la difesa dalla concorrenza}
+\subsection{Principio di singola responsabilità}
+\begin{itemize}
+	\item Il codice legato alla concorrenza ha il suo ciclo di sviluppo, cambiamento e perfezionamento
+	\item Il codice legato alla concorrenza ha le sue sfide che sono diverse e più difficili rispetto a quelle date da codice non concorrente
+	\item Il numero di modi nei quali un codice legato alla concorrenza scritto male può fallire rende più complicata la sua analisi.
+\end{itemize}
+
+Raccomandazione: mantenere il codice legato alla concorrenza separato da altro codice.
+
+\subsection{Limitare la condivisione delle risorse}
+Il primo trucco da adottare è vedere se c'è un accessore che permetta al compilatore di comprendere che una risorsa deve essere soggetta ad operazioni atomiche, ovvero non interrompibili (e.g. synchronized in Java). In più si dovrebbe cercare di ridurre il numero di utilizzi di sezioni critiche in quanto:
+\begin{itemize}
+	\item prima o poi queste sezioni di codice verranno aggiornate e quando anche una sola verrà dimenticata il codice si romperà
+	\item alto rischio di duplicazione di codice
+	\item Sarà difficile trovare la fonte degli errori
+\end{itemize}
+L'incapsulazione è un'ottima soluzione.
+
+\subsection{Usare copie dei dati}
+Una possibilità per evitare problemi di concorrenza è copiare i dati da passare ai vari thread in modalità sola lettura oppure passare i dati a tutti i thread, permettere di modificarli indipendentemente e poi avere un thread che si occupi della discriminazione dei risultati per poi unirli.
+
+\subsection{I thread dovrebbero essere indipendenti}
+Ogni thread dovrebbe avere i suoi dati non condivisi e lavorare indipendentemente dagli altri.
+
+\section{Conoscere le librerie}
+Le librerie possono offrire soluzioni thread safe. In java vanilla ci sono \emph{java.util.concurrent, java.util.concurrent.atomic, java.util.concurrent.locks}.
+
+\section{Conoscere i modelli di esecuzione}
+Per capire come eseguire certi lavori prima dobbiamo capire i rischi della concorrenza:
+\begin{table}[]
+\begin{tabular}{|l|l|}
+\hline
+\textbf{Risorse bloccata} & \begin{tabular}[c]{@{}l@{}}Risorse di una grandezza limitata o valori usati\\ in un ambiente concorrente. Ad esempio le\\ connessioni ad un DB\end{tabular}                                                                                 \\ \hline
+\textbf{Mutua esclusione}  & \begin{tabular}[c]{@{}l@{}}Un solo thread può accedere ai dati condivisi\\ o una risorsa condivisa alla volta\end{tabular}                                                                                                                  \\ \hline
+\textbf{Starvation}        & \begin{tabular}[c]{@{}l@{}}Un thread o un gruppo di thread non possono\\ procedere per un tempo eccessivo. Ad esempio,\\ permettere sempre i thread più veloci per primi\\ può portare a non lasciare tempo a quelli più lenti\end{tabular} \\ \hline
+\textbf{Deadlock}          & \begin{tabular}[c]{@{}l@{}}Due o più thread si attendono a vicenda per\\ terminare\end{tabular}                                                                                                                                             \\ \hline
+\textbf{Livelock}          & \begin{tabular}[c]{@{}l@{}}Due thread provano a portare avanti il lavoro\\ ma trovano sempre l'altro thread "sulla strada"\end{tabular}                                                                                                     \\ \hline
+\end{tabular}
+\end{table}
+
+\subsection{Produttore-consumatore}
+Uno o più thread che producono lavoro lo mettono in una coda o in un buffer. Uno o più thread acquisiscono il lavoro dalla coda e lo completano. La coda tra il produttore e il consumatore è una risorsa bloccata, ovvero il produtore deve attendere che si liberi dello spazio in coda prima di scrivervi e il consumatore deve attendere fino a quando c'è qualcosa da consumare in coda.
+
+\subsection{Lettore-scrittore}
+Quando sia ha una risorsa condivisa che serve primariamente come fonte d'informazione per i lettori ma che occasionalmente è aggiornata dagli scrittori, la quantità di dati scritta  un problema. Enfatizzare il flusso dati in entrata può provocare starvation e l'accumulazione di informazioni non aggiornate.
+
+Il problema è bilanciare lettura e scrittura in modo che i dati siano sempre aggiornati per i lettori e che gli scrittori possano aggiornarli. Una classica strategia è attendere che non ci siano lettori per permettere allo scrittore di andare avanti.
+
+\subsection{La cena dei filosofi}
+Immaginiamo dei filosofi attorno ad un tavolo. Una forchetta è alla sinistra di ogni filosofo e c'è una ciotola di pasta al centro del tavolo. I filosofi continuano a pensare fino a quando non hanno fame. Quando sono affamati prendono una forchetta da un qualsiasi lato e mangiano. Un filosofo non può mangiare a meno che non stia tenendo due forchette. Se un filosofo al proprio fianco sta usando le posate deve attendere. Una volta che il filosofo ha mangiato rimette le posate a posto.
+
+Questo è un classico esempio di deadlock, livelock. Un modo per risolverla è l'uso di un semaforo per le risorse.
+
+\section{Attenzione alle dipendenze tra metodi sincronizzati}
+Se più thread condividono le stesse risorse è possibile che ci sia un problema di design.
+
+Ci saranno volte che si sarà costretti ad usare risorse condivise, in quel caso si possono tenere a mente certi principi:
+\begin{itemize}
+	\item Lock basato sul client: il client blocca la catena di chiamate
+	\item Lock basato sul server: All'interno del server si crea un metodo che blocchi il server.
+	\item Server adattivo: Crea un intermediario che si occupa del blocco
+\end{itemize}
+
+\section{Mantenere le sezioni sincronizzate piccole}
+Se una sezione sincronizzata fosse troppo grossa diventerebbe un collo di bottiglia. Immaginiamo che più persone debbano passare da una fessura, una sola alla volta: se la fessura è corta allora il tempo di attesa sarà minimo, se invece è troppo lunga il tempo si estende, bloccando tutte le altre persone. Uguale per i thread con le sezioni sincronizzate.
+
+\section{Scrivere bene del codice di terminazione è difficile}
+Una cosa è scrivere un sistema che debba lavorare per un tempo indefinito, un'altra scrivere un codice che si spenga in maniera aggraziata.
+
+Alcuni thread magari sono in attesa di segnali che non arrivano, oppure processi genitori che attendono tutti i figli ma alcuni di questi sono in deadlock e quindi il processo genitore aspetterà per sempre\footnote{Chi l'avrebbe mai detto che un dramma familiare potesse bloccare un programma dallo spegnersi}.
+
+\section{Testare codice multithreaded}
+Una checklist possibile per testare il codice in maniera sicura:
+\begin{enumerate}
+	\item Trattare i bug sporadici come possibili problemi di multithreading
+	\item Testare prima il codice non multithreaded
+	\item Rendere il codice multithreaded inseribile
+	\item Rendere il codice multithreaded aggiustabile
+	\item Testarlo con più thread che processori
+	\item Testarlo su più piattaforme
+	\item Creare test che possano forzare i fallimenti
+\end{enumerate}
+
+\subsection{Trattare i bug sporadici come possibili problemi di multithreading}
+Non bisogna ignorarli pensando che siano casi isolati. Per quanto possano essere rari e per quanto possa essere difficile scatenarli, non bisogna darsi per vinti.
+
+\subsection{Testare prima il codice non multithreaded}
+Se non funziona il codice non threaded allora perchè dovremmo concentrarci sul renderlo multithreaded?
+
+\subsection{Rendere il codice multithreaded inseribile}
+Scrivere il codice in modo che sia configurabile:
+\begin{itemize}
+	\item Un thread, più thread, variati in base all'esecuzione
+	\item Il thread interagisce con qualcosa che può essere reale o un doppio per il test
+	\item Eseguire il test con casi veloci, lenti, variaibli
+	\item Configurare i test in modo che possano essere eseguiti per un numero di interazioni
+\end{itemize}
+
+\subsection{Rendere il codice multithreaded aggiustabile}
+Trovare il giusto equilibrio di thread solitamente è un lavoro di svariate prove. Il trucco è trovare un modo di misurare le performance.
+
+\subsection{Testarlo con più thread che processori}
+QUando il computer passa da un task all'altro possono accadere cose, per questo è meglio incentivare questo cambio tramite la creazione di più thread di quanti gestibili.
+
+\subsection{Testarlo su più piattaforme}
+DIfferente sistema operativo, differente sistema di gestione dei thread. Testarlo su più sistemi permette di capire quali siano le parti incriminate.
+
+\subsection{Creare test che possano forzare i fallimenti}
+In certi casi bisogna forzare dei casi limite. ome fare? Ci sono ad esempio \emph{Object.wait(), Object.sleep(), Object.yield(), Object.priority()} che possono modificare il flusso dei thread. Ci sono due opzioni qua:
+\begin{itemize}
+	\item scriverlo a mano
+	\item automatizzarlo
+\end{itemize}
+
+\subsubsection{Scriverlo a mano}
+Questa è la via da scegliere quando si vuole testare un pezzo specifico di codice. Ad esempio:
+\lstinputlisting[language=java]{code/063}\label{code: 063}
+La chiamata a yield() cambia l'esecuzione e probabilmente ne causa il fallimento. Se il codice salta non è però a causa dello yield. CI sono svariati problemi con questo approccio:
+\begin{itemize}
+	\item devi trovare i punti appropriati
+	\item come si fa a sapere quali chiamate fare e dove?
+	\item lasciare questo codice in produzione rallenta tutto
+	\item è un approccio shotgun: potresti non trovare i difetti o no ma le probabilità non sono dalla tua
+\end{itemize}
+
+\subsubsection{Automatizzato}
+Si possono usare framework appositi per programmare queste chiamate nel codice. Ad esempio con un solo metodo
+\lstinputlisting[language=java]{code/064}\label{code: 064}
+Che venga chiamato in più punti
+\lstinputlisting[language=java]{code/065}\label{code: 065}
+Ora si ha un semplice aspetto che sceglie se fare niente, andare in sleep o prendere la precedenza.
+
+Oppure potremmo avere due implementazioni: una in produzione che fa niente e una per il test che genera numeri a caso e sceglie cosa fare. Se si esegue il test migliaia di volte i risultati varieranno.
+
+C'è un programma di IBM chiamato \href{http://www.alphaworks.ibm.com/tech/contest}{ConTest} che fa esattamente ciò.
+
+\chapter{Pulizia successiva}
 
 
 \end{document}
