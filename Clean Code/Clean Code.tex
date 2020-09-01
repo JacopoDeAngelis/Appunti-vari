@@ -203,7 +203,7 @@ Così come per le variabili, i nomi devono essere significativi. Meglio un nome 
 
 Importante è avere una naming convention, anche non scritta, in modo che i nomi siano consistenti e che siano facilmente interpretabili.
 
-\section{Argomenti delle funzioni}
+\section{Argomenti delle funzioni}\label{par: argomenti funzioni}
 Il numero ideale di argomenti per le funzioni è 0. Uno va bene, due accettabile, tre già è strano, quattro o più richiede una giustificazione seria.
 
 \subsection{Forma comune per singolo argomento}
@@ -215,7 +215,7 @@ Ci sono due ragioni per passare un argomento:
 
 Un altra ragione è quella di generazione di un evento: il metodo ha in ingresso un argomento ma in uscita nessuno.
 
-\subsection{Argomenti di guardia}
+\subsection{Argomenti di guardia}\label{par: argomenti guardia}
 Sono brutti. Passare un boolean in una funzione come guardia per dire con che modalità eseguire la funzione è brutto a vedersi. Sarebbe meglio dividere la funzione in più metodi.
 
 \subsection{Funzioni con due argomenti}
@@ -244,7 +244,7 @@ Ad esempio:
 \lstinputlisting[language=java]{code/019}\label{code: 019}
 Qua evidentemente inizializza la sessione quando la funzione dovrebbe solo validare l'utente. Questo va contro il principio di singola resposabilità
 
-\section{Output}
+\section{Output}\label{par: output}
 Certi nomi possono confondere, portando a chiedersi se stiano parlando dell'input o dell'output. Ad esempio \emph{appendFooter(s)} attacca s ad un footer o attacca un qualche footer ad s? Solo guardando la firma del metodo si scopre che
 \lstinputlisting[language=java]{code/020}\label{code: 020}
 effettivamente attacca un footer al buffer passato.
@@ -670,7 +670,7 @@ Troppe dipendenze rende difficile creare test.
 \section{Regole 2-4: refactoring}
 Ora che abbiamo un codice testabile possiamo raffinarlo senza la paura di non notare un errore che spacchi tutto.
 
-\section{Niente duplicazioni}
+\section{Niente duplicazioni}\label{par: duplicazione}
 Ogni duplicazione di codice è un errore per due motivi:
 \begin{itemize}
 	\item è uno spreco cognitivo
@@ -860,7 +860,141 @@ Oppure potremmo avere due implementazioni: una in produzione che fa niente e una
 
 C'è un programma di IBM chiamato \href{http://www.alphaworks.ibm.com/tech/contest}{ConTest} che fa esattamente ciò.
 
-\chapter{Pulizia successiva}
+\chapter{\href{https://refactoring.guru/refactoring/smells}{Code smells} ed euristica}
+\section{Commenti}
+\subsection{Informazione inappropriata}
+In certi casi le informazioni non andrebbero incluse all'interno dei commenti ma, ad esempio, dei servizi di versionamento. I commenti che diventano obsoleti con l'evoluzione del codice tendono a rimanere se sono inseriti direttamente nel codice.
+
+\subsection{Commento obsoleto}
+Se un commento non è più attuale è meglio cancellarlo o modificarlo.
+
+\subsection{Commenti ridondanti}
+Stesso esempio a pagina \pageref{code: 033}
+
+\subsection{Commenti scritti male}
+Un commento sgrammaticato è il peggior commento che ci sia.
+
+\subsection{Codice commentato}
+Meglio cancellare parti di codice tramite sistema di versionamento e non commentandole, diventano solo un peso per la struttura poi.
+
+\section{Ambiente}
+\subsection{La build richiede più di uno step}
+Fare una build dovrebbe essere una singola operazione triviale.
+
+\subsection{I test richiedono più di uno step}
+Lanciare un test dovrebbe essere un'operazione che richiede, come per la build, una singola istruzione, che sia un comando una shell o un bottone in un'IDE.
+
+\section{Funzioni}
+\subsection{Troppi argomenti}
+Stessa spiegazione vista da pagina \pageref{par: argomenti funzioni}.
+
+\subsection{Argomenti di output}
+Stessa spiegazione vista da pagina \pageref{par: output}.
+
+\subsection{Argomenti di guardia}
+Stessa spiegazione vista da pagina \pageref{par: argomenti guardia}.
+
+\subsection{Funzioni morte}
+Le funzioni che non vengono mai chiamate dovrebbero essere scartate.
+
+\section{Generali}
+\subsection{Più linguaggi in un solo file sorgente}
+Il fatto che si possa fare non vuol dire che sia una soluzione intelligente o chiara a chi legge. 
+
+\subsection{Comportamento ovvio non implementato}
+Ogni funzione dovrebbe implementare ciò che un programmatore può aspettarsi dal suo nome.
+
+\subsection{Comportamento errato sui limiti}
+Il problema di certi programmi spesso è che non viene considerato correttamente cosa potrebbe andare storto nelle situazioni limite.
+
+\subsection{Violare i limiti di sicurezza}
+I limiti ci sono per un motivo, semplicemente decidere di ignorarli per rendere più semplice la fase di testing è un errore che può costare caro.
+
+\subsection{Duplicazione}
+Vedere pagina \pageref{par: duplicazione}.
+
+\subsection{Codificare al livello di astrazione sbagliato}
+L'astrazione è ciò che ci permette di separare i vari livelli concettuali di un programma. Violarla ci impedisce di ragionare al meglio su cosa vogliamo fare, in quale caso e cosa vogliamo dire al successivo programmatore.
+
+\subsection{Troppe informazioni}
+Le interfacce non dovrebbero offrire troppe funzioni da cui dipendere. Quindi solitamente si impara a limitare cosa si espone nelle interfacce. Nascondere i dati, nascondere le funzioni di utilità, nascondere le costanti e i temporanei.
+
+\subsection{Codice morto}
+Il codice non eseguito è codice inutile. Il codice inutile appesantisce. Cancella il codice morto, merita il suo eterno riposo.
+
+\subsection{Separazione verticale}
+Le variabili e le funzioni dovrebbero essere definite vicino a dove verranno usate per la prima volta.\footnote{Dissento su questa visione dell'autore, dipende da come uno è abituato ma lo standard è dichiarare le variabili, costruttori, metodi pubblici, metodi di utilità, getter e setter}.
+
+\subsection{Inconsistenza}
+Sempre perchè il codice deve essere facilmente interpretabile, se da una parte abbiamo usato un nome per una variabile legata ad una cerca classe, allora anche dalle altre parti chiamiamo sempre allo stesso modo quella variabile e non usiamo quel nome per altre cose.
+
+\subsection{Clutter}
+Commenti che non danno informazioni, costruttori non implementati, perchè bisogna lasciare tutte queste cose che non danno informazioni? Via.
+
+\subsection{Dipendenza artificiale}
+Non inseriamo variabili o altro in posti a cui non appartengono logicamente, come ad esempio forzare un'enumerazione perchè vogliamo che funzioni in una maniera specifica in una sottoclasse. 
+
+\subsection{\href{https://refactoring.guru/smells/feature-envy}{Feature envy}}
+Una classe interessata alle variabili e ai metodi di un'altra classe è una classe non pensata correttamente.
+
+\subsection{Intenti non chiari}
+Se non si capiscce quale sia l'intento del codice semplicemente leggendolo, allora qualcosa non va. Ad esempio questo codice è da bruciare, se scrivi codice così cerca aiuto:
+\lstinputlisting[language=java]{code/066}\label{code: 066}
+
+\subsection{Responsabilità male posizionate}
+Ogni tanto mettiamo giustamente certe funzioni come statiche in altri casi no. Ora, se lavoriamo su di una libreria come Math è giustissimo, se vogliamo creare delle classi da estendere, rendere polimorfiche e quindi modificando l'implementazione, allora forse è meglio evitare.
+
+\subsection{Static dove non dovrebbe essere}
+Se un metodo non opera su di una singola istanza allora va bene che sia statico. Un problema è quando non si considera il possibile polimorfismo di una funzione, in quel caso non può essere statica in quanto sarebbe chiamata col nome della classe.
+
+\subsection{Usare variabili di spiegazione}
+\lstinputlisting[language=java]{code/067}\label{code: 067}
+Le variabili key e value sono variabili di spiegazione, ovvero si mostra in maniera diretta cosa rappresentino, il valore viene racchiuso in una variabile leggibile e chiara.
+
+\subsection{I nomi delle funzioni dovrebbero dire cosa fanno}
+Il nome di una funzione non dovrebbe lasciare dubbi sul cosa faccia, cosa prenda in ingresso e cosa verrà restituito alla fine.
+
+\subsection{Comprendere l'algoritmo}
+Prima di terminare il proprio lavoro perchè "funziona" è meglio essere sicuri di aver compreso cosa il codice da noi scritto stia facendo, il perchè funzioni e capire perchè questa soluzione è corretta. L'approccio migliore è prima arrivare ad un "funziona" e poi fare refactoring da lì.
+
+\subsection{Rendere fisiche le dipendenze logiche}
+\lstinputlisting[language=java]{code/068}\label{code: 068}
+Se un modulo dipende da un altro, la dipendenza dovrebbe essere fisica, non solo logica. Il modulo dipendente non dovrebbe fare assunzioni (ovvero dipendenze logiche) riguardo al modulo da cui dipende. Dovrebbe chiedere esplicitamente al modulo le informazioni che gli servono.
+
+Questo codice, ad esempio, ha una dipendenza logica che non è stata resa fisica: PAGE\_SIZE. Perchè questa classe dovrebbe conoscere la dimensione della pagina?
+Possiamo rendere fisica la dipendenza creando un metodo chiamato \emph{getMaxPageSize()}, questo perchè magari un'altra implementazione potrebbe avere un valore differente.
+
+\subsection{Preferire il polimorfismo a if/else o switch}
+Proposta di regola: non ci possono essere più di uno switch per un certo tipo di selezione. I casi in quello switch devono creare degli oggetti polimorfici che prendono il posto di altri switch nel resto del sistema.
+
+\subsection{Seguire convenzioni standard}
+Ogni team dovrebbe rispettare le norme generali dell'industria. Ad esempio, si dovrebbe specificare dove dichiarare le istanze, come chiamare i metodi, le classi e le variabili.
+
+\subsection{Sostituire i numeri magici con costanti}
+Ad esempio, il numero 86400 dovrebbe essere nascosto tramite una costante SECONDS\_PER\_DAY. Se si stanno stampando 55 linee per pagina, allora avremo la costante LINES\_PER\_PAGE.
+
+\subsection{Essere precisi}
+Non prendersi del tempo per pensare ai casi limite, alle ragioni per scegliere una variabile o un'altra, cosa potrebbe restituire una query, è un errore.
+
+\subsection{Struttura sopra convenzione}
+Le convenzioni sono comode però a seconda dell'ambito può esserci fin troppa licenza, ad esempio su come nominare i campi di uno switch controllo il trovarsi a dovere dare nomi precisi per una classe astratta.
+
+\subsection{Condizioni incapsulate}
+Meglio estrarre le funzioni che spiegano l'intendo di una condizione:
+\lstinputlisting[language=java]{code/069}\label{code: 069}
+è meglio di
+\lstinputlisting[language=java]{code/070}\label{code: 070}
+
+\subsection{Evitare le condizioni negative}
+\lstinputlisting[language=java]{code/071}\label{code: 071}
+è meglio di
+\lstinputlisting[language=java]{code/072}\label{code: 072}
+
+\subsection{Le funzioni dovrebbero fare una sola cosa}
+\lstinputlisting[language=java]{code/073}\label{code: 073}
+è molto meno comprensibile rispetto a
+\lstinputlisting[language=java]{code/074}\label{code: 074}
+In questo caso le funzioni sono ben separate e ci permettono di controllare in una maniera più naturale ognuna di esse.
 
 
 \end{document}

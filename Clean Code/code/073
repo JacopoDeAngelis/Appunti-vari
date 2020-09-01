@@ -1,0 +1,8 @@
+public void pay() {
+  for (Employee e : employees) {
+    if (e.isPayday()) {
+      Money pay = e.calculatePay();
+      e.deliverPay(pay);
+    }
+  }
+}
