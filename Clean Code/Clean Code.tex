@@ -1,0 +1,1000 @@
+\documentclass[11pt,a4paper]{book}
+
+\usepackage{Appunti}
+
+\begin{document}
+\title{Clean Code\\
+\large{\textit{Robert C. Martin}}}
+\author{Jacopo De Angelis}
+\maketitle
+
+\pagebreak
+\tableofcontents
+\pagebreak
+
+\chapter{Clean code}
+Il codice non finirà con l'era dell'autogenerazione da IA. Qualcuno dovrà creare le IA, qualcuno dovrà imparare come dare le specifiche. Il codice sarà sempre presente.
+
+\section{Pessimo codice}
+Una delle prime cause del pessimo codice è la fretta dettata dall'ansia. L'idea di dover far uscire il codice il prima possibile ci porta a commettere errori, commettere inesattezze. Quello è ciò che può portare a seri problemi successivamente, il rileggere il proprio codice scritto in maniere quantomeno esecrabili è una tortura. E ricordiamo che se si pensa "lo metto a posto dopo", dopo equivale a mai.
+
+I rallentamenti derivanti da nuovo codice di bassa qualità sono esponenziali, lentamente la produttività crolla perchè operare sul codice precedente è sempre più complicato.
+\begin{figure}[h!]
+	\begin{center}
+		\includegraphics[scale=0.6]{img/001.png}
+		\caption{Produttività vs tempo}
+		\label{fig: 001}
+	\end{center}
+\end{figure}
+
+Il che può portare ad un desiderio di ricreare da zero l'intera base del codice, cosa non solo dispendiosa ma che richiede anche molto tempo. I team si trovano a lavorare in parallelo, il nuovo team che ricrea tutto e integra il nuovo lavoro del vecchio team e, alla fine, ci si troverà nella stessa situazione.
+
+\section{Scrivere buon codice}
+Scrivere buon codice richiede disciplina nell'uso di molte piccole tecniche applicate in ogni singolo momento. Tutto questo richiede anche una parte di "senso estetico", un percepire il perchè un bel codice sia, appunto, bello.
+
+Una regola che possiamo ereditare dai boy scout: lascia il campo più pulito di come l'hai trovato. Ad esempio: una variabile può avere un nome più autoesplicativo? Cambiala. Una funzione può essere spezzata in più funzioni elementari? Dividila.
+
+\chapter{Nomi significativi}
+\section{Usare nomi che rivelino l'intenzione}
+Trovare nomi significativi non è semplice ma il tempo che prendono nel farlo è sicuramente meno di quello speso a decifrare nomi non chiari.
+
+Ogni nome, che sia di variabile o di funzione, deve rispondere alle domande:
+\begin{itemize}
+	\item[] Cosa fa
+	\item[] Perchè esiste
+	\item[] Come viene utilizzata
+\end{itemize}
+Se un nome richiede un commento allora il nome è sbagliato.
+
+Ad esempio
+\lstinputlisting[language=java]{code/001}\label{code: 001}
+d non dice molto come nome. Dovremmo scegliere un nome migliore, ad esempio
+\lstinputlisting[language=java]{code/002}\label{code: 002}
+Scegliere un nome che rivela un intento rende molto più semplice cambiare e comprendere un codice. Ad esempio cosa fa questo pezzo di codice?
+\lstinputlisting[language=java]{code/003}\label{code: 003}
+Il problema di questo codice non è la sua semplicità ma la sua capacità di avere un senso implicito. Ad esempio, le domande che ci possiamo porre sono:
+\begin{itemize}
+	\item[] Cos'è theList?
+	\item[] Che significato ha l'elemento 0 di theList?
+	\item[] Qual è il significato di 4?
+	\item[] Come viene usata la lista ritornata?
+\end{itemize}
+
+Queste risposte dovrebbero essere nel codice. Immaginiamo ora di lavorare a campo minato. Rinominiamo la lista con gameBoard.
+
+Ogni cella della board è rappresentata da un array, il valore alla posizione 0 è la posizione dello status della cella e se è 4 vuol dire "segnata". Già dando implicitamente queste notazioni possiamo migliorare il codice:
+\lstinputlisting[language=java]{code/004}\label{code: 004}
+
+Possiamo andare anche oltre e scrivere una semplice classe per le celle invece di avere degli int. Può includere una funzione con un nome che ne sveli l'intento per nascondere questo numero. Il risultato è:
+\lstinputlisting[language=java]{code/005}\label{code: 005}
+
+\section{Evitare la disinformazione}
+Mai usare parole che non descrivono la realtà, ad esempio usare accountList solo se effettivamente ci troviamo davanti ad una List.
+
+Non usare nomi che variano tra di loro per dei piccoli dettagli, ad esempio \emph{XYZControllerForEfficient\textbf{Handling}OfStrings} e \emph{XYZControllerForEfficient\textbf{Storage}OfStrings}
+
+Avere una naming convention consistente è essenziale. Un pessimo esempio di uso è quello di o ed l minuscoli, pericolosamente simili a 0 e 1.
+
+\section{Fare distinzioni significative}
+Evitare nomi con degli errori di battitura intenzionali perchè si vogliono nominare due variabili allo stesso modo. Evitare anche nomi che non danno informazioni, ad esempio:
+\lstinputlisting[language=java]{code/006}\label{code: 006}
+
+Evitare nomi "che creano rumore", ad esempio ProductInfo e ProductData si differenziano per la seconda parola ma comunque non sappiamo cosa facciano.
+
+Il tipo di entità non dovrebbe mai essere contenuto nel nome. NameString non ha senso, non ci chiederemmo mai se un semplice Name possa essere un float, questo perchè il nome stesso ci informa del suo contenuto.
+
+Un esempio di confusione è:
+\lstinputlisting[language=java]{code/007}\label{code: 007}
+Come potremmo mai sapere quale funzione chiamare dal suo nome?
+
+Distinguere sempre i nomi in modo da intuire immediatamente la loro funzione leggendoli.
+
+\section{Usare nomi pronunciabili}
+Devi poterlo pronunciare. Hai mai provato a discutere della funzione della classe Genymdhms (generation date, year, month, day, hour, minute, and second)? Spero di no.
+
+Immaginiamo comparare questa classe
+\lstinputlisting[language=java]{code/008}\label{code: 008}
+con questa
+\lstinputlisting[language=java]{code/009}\label{code: 009}
+
+\section{Usare nomi ricercabili}
+Le variabili con nome di una singola lettera vanno bene solo come variabili locali di un metodo, mai in altro modo, sarebbe impossibile cercarle altrimenti.
+
+Compariamo
+\lstinputlisting[language=java]{code/010}\label{code: 010}
+con
+\lstinputlisting[language=java]{code/011}\label{code: 011}
+
+\section{Prefissi}
+I prefissi erano utili anni fa, ormai sono abbastanza inutili.
+
+\section{Interfacce e implementazione}
+Ci sono due scuole di pensiero:
+\begin{enumerate}
+	\item Interfaccia che inizia con I, implementazione senza decorazioni (IClasse, Classe)
+	\item Interfaccia senza decorazioni, implementazione con suffisso Imp (Classe, ClasseImp)
+\end{enumerate}
+
+É uguale.
+
+\section{Evitare il mapping mentale}
+Il significato dei nomi non deve essere chiaro solo a chi scrive ma anche a chi legge.
+
+\section{Nomi delle classi}
+Le classi dovrebbero essere nomi o frasi di sostantivi, evitare Manager, Processor, Data o Info. Una classe non dovrebbe essere un verbo
+
+\section{Nomi dei metodi}
+I nomi dovrebbero contenere un verbo che descrivere cosa fanno, ad esempio postPayment, deletePage o save.
+
+Accessori, mutatori e predicati dovrebbero iniziare con get, set e is.
+
+\section{Non usare nomignoli}
+Non chiamare variabili, metodi e classi con nomi che utilizzano inside joke, riferimenti culturali o battute. Chiamare la funzione delete() holyHandGranade non è simpatico, è un inferno.
+
+\section{Una parola per concetto}
+Scegli una parola che esprima un concetto e mantienila. Ad esempio scegli tra fetch, retrieve e get e poi usa solo quella, non alternare tra le tre.
+
+\section{Usare nomi del dominio della soluzione}
+Meglio usare nomi che hanno un significato speciale nel caso sia quello il caso. Ad esempio, dire AccountVisitor vuol dire molto se si è a conoscenza del pattern visitor. I nomi che usano un lessico tecnico sono comodi.
+
+\section{Usare nomi del dominio del problema}
+Nel caso non ci siano nomi immediati da utilizzare facenti parte del dominio della soluzione, allora possiamo iniziare a guardare il dominio del problema.
+
+\section{Aggiungere un contesto significativo}
+Solitamente è meglio avere nomi che si spieghino da soli, in certi casi, però, ciò è difficile. Prendiamo ad esempio firstName, lastName, street, houseNumber, city, state e zipcode. Assieme sappiamo che sono un indirizzo ma presi singolarmente? Se vedessimo state usato da un'altra parte? In questo caso, allora, può essere accettabile usare, ad esempio addrFirstName, addrLastName, addrStreet, addrHouseNumber, addrCity, addrState e addrZipcode.
+
+Non bisogna aggiungere del contesto a caso però, ad esempio dando a tutte le variabili un prefisso che descriva l'app.
+
+\chapter{Funzioni}
+La maggior parte delle regole di scrittura per le funzioni sono le stesse descritte dalle buone norme del \href{https://refactoring.guru/refactoring/techniques}{refactoring}.
+
+\section{Corte}
+Le funzioni dovrebbero essere lunghe massimo intorno alle 20 righe, nulla vieta di riuscire a ridurle ulteriormente però. Se è di più possiamo chiederci "è possibile estrarre una parte della funzione"?
+
+Ad esempio la funzione
+\lstinputlisting[language=java]{code/012}\label{code: 012}
+è riscrivibile come
+\lstinputlisting[language=java]{code/013}\label{code: 013}
+
+\subsection{Blocchi e indentazione}
+Se possibile sarebbe meglio ridurre i blocchi di indentazione a una sola linea, come abbiamo visto nel codice precedente, e possibilmente che chiami un'altra funzione per svolgere le sue funzioni.
+
+Tutto ciò rende il codice snello e leggibile
+
+\section{Fare una sola cosa}
+Un metodo non deve fare tutto e male ma solo una cosa e farla bene. Un metodo che si occupa di una sequenza di passi avrà richiami a metodi che eseguono le subroutine ma non avrà altra logica al suo interno.
+
+Se in una funzione vediamo più sezioni come dichiarazione, inizializzazione e scrematura come possiamo vedere qua
+\lstinputlisting[language=java]{code/014}\label{code: 014}
+vuol dire che probabilmente possiamo scomporla ulteriormente.
+
+\section{Un livello di astrazione per funzione}
+Ci si deve assicurare che una funzione sia ad un solo livello di astrazione. Non dovremmo mai avere funzioni ad alto livello di astrazione mischiate a codice a basso livello di astrazione, crea solo confusione e non rispetta il principio di responsabilità.
+
+\subsection{Leggere il codice dall'alto verso il basso}
+Primo avviso: questo si applica solo a linguaggi compilati e a linguaggi che si occupano dell'analisi di tutto il codice prima dell'esecuzione. In un linguaggio interpretato questa regola non si applica in quanto le funzioni devono essere descritte bottom-top.
+
+Come regola di base dovremmo poter leggere il codice come una narrativa, dalla funzione principale a quelle ausiliarie, scendendo sempre più tra i vari livelli di astrazione.
+
+\section{Controlli di flusso}
+É difficile mantenere brevi gli switch e gli if/else. Possiamo però separare lo switch in una classe di basso livello e non vederlo mai ripetuto.
+
+Consideriamo questo codice
+\lstinputlisting[language=java]{code/015}\label{code: 015}
+\begin{enumerate}
+	\item è già grande e crescerà ancora di più all'aumentare delle tipologie di dipendenti
+	\item fa più d una cosa
+	\item viola il principio di singola responsabilità
+	\item viola il principio open close\footnote{Le entità dovrebbero essere aperte per l'estensione, chiuse per le modifiche} perchè deve essere cambiata per ogni modifica nel dataset
+\end{enumerate}
+
+La soluzione a questo problema, ad esempio, è una \href{https://refactoring.guru/design-patterns/abstract-factory}{abstract factory}. La factory passerà l'istanza dei dipendenti e i vari metodi sono creati polimorficamente usando le interfacce.
+
+Una regola possibile è che gli switch:
+\begin{enumerate}
+	\item devono compararire solo una volta
+	\item devono sfruttare il polimorfismo
+	\item devono essere nascosti tramite ereditarietà
+\end{enumerate}
+\lstinputlisting[language=java]{code/016}\label{code: 016}
+
+\section{Usare nomi descrittivi}
+Così come per le variabili, i nomi devono essere significativi. Meglio un nome lungo rispetto ad un nome che non spiega ciò che accade nel metodo.
+
+Importante è avere una naming convention, anche non scritta, in modo che i nomi siano consistenti e che siano facilmente interpretabili.
+
+\section{Argomenti delle funzioni}\label{par: argomenti funzioni}
+Il numero ideale di argomenti per le funzioni è 0. Uno va bene, due accettabile, tre già è strano, quattro o più richiede una giustificazione seria.
+
+\subsection{Forma comune per singolo argomento}
+Ci sono due ragioni per passare un argomento:
+\begin{itemize}
+	\item stai ponendo delle domande su di esso
+	\item stai operando su di esso
+\end{itemize}
+
+Un altra ragione è quella di generazione di un evento: il metodo ha in ingresso un argomento ma in uscita nessuno.
+
+\subsection{Argomenti di guardia}\label{par: argomenti guardia}
+Sono brutti. Passare un boolean in una funzione come guardia per dire con che modalità eseguire la funzione è brutto a vedersi. Sarebbe meglio dividere la funzione in più metodi.
+
+\subsection{Funzioni con due argomenti}
+Una diade non per forza è negativa, ad esempio quando si crea un punto è necessario passare due variabili per gli assi x e y e ciò è giusto. Il problema è quando ci troviamo davanti ad altre forme come, ad esempio, \emph{assertEquals(expected, actual)}. Quale viene prima, quale dopo? Serve pratica perchè non c'è un ordine naturale.
+
+Le soluzioni sono svariate, ad esempio estrarre un campo e renderlo appartenente alla classe.
+
+\subsection{Oggetti come argomenti}
+Spesso se vengono passati due o tre argomenti, questi saranno legati in qualche modo, probabilmente in un oggetto. In quel caso è meglio pensare di passare l'oggetto direttamente. Ad esempio qua è visibile la differenza di lettura dei due metodi.
+\lstinputlisting[language=java]{code/017}\label{code: 017}
+
+\subsection{Lista come argomento}
+L'utilizzo delle liste opzionali di argomenti è molto comodo e in certi casi aiuta a tenere pulito il codice. Ad esempio
+\lstinputlisting[language=java]{code/018}\label{code: 018}
+A tutti gli effetti ha due argomenti ma a runtime può essere usato con infiniti argomenti.
+
+\subsection{Verbi e parole chiave}
+Usare una combinazione di verbi per le funzioni e sostantivi per gli argomenti può rendere le funzioni molto evocative. Ad esempio \emph{writeField(name)} subito fa capire che questo nome verrà scritto.
+
+Codificare le variabili nel nome del metodo è anche un metodo interessante per renderla autodescrittiva. Tornando all'\emph{assertEquals(expected, actual)} di prima, quando sarebbe più immediato e meno confusa la sequenza se si chiamasse \emph{assertExpectedEqualsActual(expected, actual)}?
+
+\section{Non devono avere effetti collaterali}
+Gli effetti collaterali sono bugie. Una funzione dovrebbe fare una e una sola cosa, nascondere un effetto collaterale, ovvero l'agire su di una variabile esterna al suo scope, è un modo di farle fare più cose.
+
+Ad esempio:
+\lstinputlisting[language=java]{code/019}\label{code: 019}
+Qua evidentemente inizializza la sessione quando la funzione dovrebbe solo validare l'utente. Questo va contro il principio di singola resposabilità
+
+\section{Output}\label{par: output}
+Certi nomi possono confondere, portando a chiedersi se stiano parlando dell'input o dell'output. Ad esempio \emph{appendFooter(s)} attacca s ad un footer o attacca un qualche footer ad s? Solo guardando la firma del metodo si scopre che
+\lstinputlisting[language=java]{code/020}\label{code: 020}
+effettivamente attacca un footer al buffer passato.
+
+Quello che abbiamo appena fatto è un controllo secondario, un qualcosa che può interrompere il flusso di programmazione.
+
+In generale gli output dovrebbero essere evitati, se possibile è meglio far agire le funzioni sull'oggetto che le possiede.
+
+\section{Separazione dei comandi}
+Una funzione dovrebbe fare qualcosa o rispondere a qualcosa, non entrambe.
+
+\section{Preferire le eccezioni al ritornare direttamente messaggi di errore}
+Passare errori direttamente porta al doverli gestire subito, invece passare un'eccezione ha due benefici principali:
+\begin{itemize}
+	\item sono rapidi da usare e non si confonde ciò che può essere passato
+	\item possono essere messi in calce al percorso di esecuzione
+\end{itemize}
+
+\subsection{Estrarre i blocchi try/catch}
+Con ciò si vuole dire di non scrivere l'interno del blocco catch con tutti i suoi passaggi ma di portarlo fuori come metodo in modo da avere una struttura molto più compatta, leggibile e gestibile. Ricordiamo che le eccezioni vanno gestite il più vicino possibile alla fonte ma non per questo non possiamo mandarle alla funzione chiamante.
+\lstinputlisting[language=java]{code/021}\label{code: 021}
+
+\subsection{La gestione dell'errore è una sola cosa}
+Le funzioni dovrebbero fare una sola cosa + la gestione dell'errore è una sola cosa = Una funzione che gestisce l'errore non dovrebbe fare altro. Ciò vuol dire che se in una funzione eiste la parola try dovrebbe essere la prima e niente dopo i blocchi catch e finally.
+
+\subsection{Error.java e la dipendenza da esso}
+Molti scrivono i messaggi di errore in una enumerazione da importare in ogni classe che la sfrutta. Risultato? Dipendenze ovunque ed essere costretti a modificare codice e ricompilare ogni volta.
+
+Creare eccezioni figlie della classe Error invece rende il codice meno codipendente e più manutenibile.
+
+\subsection{Non ripetersi}
+Mai ripetere funzioni, piuttosto meglio importarle ma scrivere più volte lo stesso codice porta a dover debuggare più volte e c'è il rischio di riparare da una parte e non dalle altre.
+
+\section{Programmazione strutturata}
+Molti programmatori seguono il principio di Dijkstra: ogni funzione e ogni blocco deve avere una sola entrata e una sola uscita. Ciò vuol dire:
+\begin{itemize}
+	\item un solo return
+	\item niente break o continue
+	\item mai un goto
+\end{itemize}
+
+Questa regola perde di valore quando le funzioni sono molto brevi, questo perchè una sovraingegnerizzazione in un piccolo blocco di codice rischia di oscurare il vero significato dietro al metodo.
+
+\section{Come si scrivono funzioni così?}
+Ricorda: primo passaggio è la stesura, il successivo la pulizia. Va bene scrivere codice leggibile solo da te all'inizio, non devi lasciarlo così poi. Poco alla volta puoi pulirlo, renderlo perfetto.
+
+\section{Esempio finale}
+\lstinputlisting[language=java]{code/022}\label{code: 022}
+
+\chapter{Commenti}
+I commenti possono essere molto utili come anche superflui. Se imparassimo a scrivere codice comprensibile non ci servirebbe minimamente scrivere commenti. Spesso vengono inseriti per sopperire ad una mancanza del linguaggio.
+
+Attenzione: commenti e documentazione non sono per niente la stessa cosa.
+
+Tutto ciò vuol dire che nel momento nel quale si sente il bisogno di scrivere un commento bisogna chiedersi: posso scrivere il codice in modo che non serva?
+
+Uno dei motivi principali di questa pratica è che il codice cambia, il commento spesso no.
+
+I commenti non correggono del pessimo codice!
+
+\section{Spiegati nel codice}
+\lstinputlisting[language=java]{code/023}\label{code: 023}
+Questo codice ha un commento perchè non è chiaro cosa faccia. É molto più semplice racchiudere la logica in un metodo a parte il cui nome spieghi cosa accade e poi usarlo, come ad esempio
+\lstinputlisting[language=java]{code/024}\label{code: 024}
+Ora è molto più chiaro e prende anche meno spazio
+
+\section{Buoni commenti}
+Alcuni commenti sono utili.
+
+\subsection{Commenti legali}
+Non è insolito che le aziende chiedano di inserire all'interno del codice un header con dei commenti riguardanti il copyright.
+
+Questi commenti non dovrebbero essere contratti o lunghi quanto un libro di diritto. Dovrebbero rimandare alla licenza di riferimento, salvata da un'altra parte.
+
+\subsection{Commenti informativi}
+In certi casi è utile dare delle informazioni di base, per esempio la spiegazione di cosa ritorni un metodo
+\lstinputlisting[language=java]{code/025}\label{code: 025}
+Il problema è che certe informazioni andrebbero date, come sempre, tramite il nome della funzione. Ecco un caso leggermente migliore
+\lstinputlisting[language=java]{code/026}\label{code: 026}
+In questo caso il commento serve per dare la formattazione in maniera immediata
+
+\subsection{Spiegazione d'intento}
+In certi casi i commenti servono a spiegare quale fosse lo scopo di certe scelte di codice, ad esempio
+\lstinputlisting[language=java]{code/027}\label{code: 027}
+In questo modo lo sviluppatore rende nota la propria decisione e ciò che voleva raggiungere.
+
+\subsection{Chiarimenti}
+In certi casi è possibile scrivere commenti che spieghino al lettore una parte di codice 
+\lstinputlisting[language=java]{code/028}\label{code: 028}
+Chiaramente i commenti potrebbero essere sbagliati, per questo vanno presi con attenzione.
+
+\subsection{Avvisare delle conseguenze}
+In certi casi è meglio avvisare cosa accade usando certe feature, ad esempio
+\lstinputlisting[language=java]{code/029}\label{code: 029}
+
+\subsection{TODO}
+\lstinputlisting[language=java]{code/030}\label{code: 030}
+I todo sono comodi anche per capire perchè non bisogna fucilare il creatore di un metodo del genere. Sono un promemoria per noi e un avviso per gli altri.
+
+
+\subsection{Aplificazione}
+I commenti possono essere usati per esprimere l'importanza di parti non triviali o la cui importanza non è immediata.
+\lstinputlisting[language=java]{code/031}\label{code: 031}
+
+\subsection{Javadoc o simili}
+Documentare in maniera corretta, utile e sufficiente tutto tramite le funzioni di documentazione è cosa buona e giusta. Ovviamente anche queste devono essere scritte bene ma possono contenere errori certe volte.
+
+\section{Pessimi commenti}
+\subsection{Ragionamenti generici}
+\lstinputlisting[language=java]{code/032}\label{code: 032}
+Ad esempio qua la fretta ha fatto sì che l'autore lasciasse un commento non chiaro. Chi è che carica i default? Quali sono i default? cc.
+
+\subsection{Commenti ridondanti}
+\lstinputlisting[language=java]{code/033}\label{code: 033}
+Ad esempio qua il commento è già chiaro da ciò che c'è scritto nel metodo. Spesso un commento ridondante deriva dall'aver già scritto codice chiaro ma volerlo comunque commentare per paura.
+
+\subsection{Commenti fuorvianti}
+In certi casi, per puro errore umano, nonostante le buone intenzioni, si possono lasciare commenti fuorvianti. Anche un piccolo errore nella spiegazione del flusso dei dati può creare gravi problemi.
+
+\subsection{Commenti obbligatori}
+É ridicolo avere una regola che prescriva di scrivere per ogni funzione un javadoc o simili. 
+
+\subsection{Commenti giornali}
+In certi casi gli sviluppatori scrivono un giornale delle modifiche con data e cos'è stato fatto. É inutile, non aggiunge informazioni e diventa ancora più inutile coi sistemi di versionamento.
+
+\subsection{Commenti di rumore}
+Sono i commenti che non hanno nemmeno uno scopo, occupano spazio e basta.
+
+\subsection{Rumore spaventoso}
+C'è di peggio, ci sono i commenti che fanno ciò che devono ma che sono completamente inutili e poi ci sono quelli anche sbagliati.
+
+\subsection{Indicatori per le parti}
+Un commento tipo
+\lstinputlisting[language=java]{code/034}\label{code: 034}
+per indicare un blocco di codice è utile ad una prima vista ma in realtà se il codice è ben compartimentato non c'è da preoccuparsi per qualcosa del genere.
+
+\subsection{Commenti per chiudere i blocchi}
+\lstinputlisting[language=java]{code/035}\label{code: 035}
+Questo modo di chiudere i blocchi per rendere più evidente a cosa si riferiscano è diventato completamente inutile grazie alle IDE. In più se un blocco è così vasto da non poterne riconoscere la fine, forse è meglio applicare un po' di refactoring.
+
+\subsection{Attribuzione}
+Scrivere in un commento l'autore di una parte di codice è inutile ed è reso semplice dal versionamento
+
+\subsection{Codice rimosso tramite commento}
+Eliminare del codice commentandolo, quindi in realtà lasciandolo in bella mostra, è rischioso, crea spreco di spazio e memoria e si accumula come pochi. Il versionamento aiuta a ricordare il codice cancellato, è inutile questa prassi.
+
+\subsection{Commenti HTML}
+\lstinputlisting[language=java]{code/036}\label{code: 036}
+No.
+
+\subsection{Informazione non locale}
+Un commento è buono se si riferisce alla sua prossimità, fare riferimento a codice da altre parti è sbagliato.
+
+\subsection{Troppe informazioni}
+Non essere logorroico.
+
+\subsection{Connessioni non ovvie}
+\lstinputlisting[language=java]{code/037}\label{code: 037}
+Ad esempio qua cos'è un byte filtro? Si collega al +1 o al *3?
+
+Se un commento richiede una spiegazione allora è un pessimo commento
+
+\subsection{Javadocs in codice non pubblico}
+Se il codice deve essere acceduto dall'esterno allora va bene che sia commentato, altrimenti è superfluo.
+
+\chapter{Formattazione}
+\section{Formattazione verticale} \label{par: formattazioneVerticale}
+Il livello di dettaglio di una classe dovrebbe aumentare discendendo.
+\begin{itemize}
+	\item costanti
+	\item variabili
+	\item costruttori
+	\item metodi pubblici
+	\item metodi privati
+	\item getter e setter
+\end{itemize}
+
+\subsection{Separazione delle parti}
+Gli spazi tra i blocchi di codice sono utili per discriminare le parti del codice. L'apertura verticale separa i concetti.
+
+\subsection{Associazione delle parti}
+La densità verticale implica associazione, quindi le linee che verticalmente sono dense esprimono concetti legati
+
+Se una parte ne chiama un'altra allora dovrebbero essere verticalmente vicine.
+
+\section{Formattazione orizzontale}
+Una volta il limite era 80 ma con gli schermi odierni il limite può essere alzato anche a 120. La regola da seguire, idealmente, è che a font standard non si debba mai scorrere a in orizzontale sullo schermo.
+
+\subsection{Apertura orizzontale e densità}
+Tra operatori e parti lo spazio serve, nella dichiarazione o nella chiamata di una funzione lo spazio tra nome della funzione e parentesi no, questo perchè sono strettamente legate.
+
+\subsection{Allineamento orizzontale}
+L'indentazione serve per rendere evidenti i blocchi di codice, aiutando così nella loro identificazione.
+
+\section{Regole del gruppo}
+Tutti abbiamo delle regole preferite ma se si lavora in gruppo allora si deve concordare su di uno stile unificato. Queste regole devono essere seguite e documentate.
+
+\chapter{Oggetti e strutture dati}
+\section{Astrazione}
+Guardiamo i due listati seguenti. Entrambi rappresentano un punto del piano cartesiano, uno espone completamente la sua implementazione, l'altro lo nasconde.
+\lstinputlisting[language=java]{code/038}\label{code: 038}
+\lstinputlisting[language=java]{code/039}\label{code: 039}
+La seconda classe nasconde come vengono salvate le sue variabili e, soprattutto, crea delle regole d'accesso ai dati. 
+
+\section{Asimmetria dati/oggetti}
+La differenza è:
+\begin{itemize}
+	\item gli oggetti nascondono i dati ed espone funzioni
+	\item le strutture dati espongono i dati e non hanno funzioni significative
+\end{itemize}
+
+\section{Legge di Demetra}
+\begin{itemize}
+	\item ogni unità di programma dovrebbe conoscere solo poche altre unità di programma strettamente correlate
+	\item ogni unità di programma dovrebbe interagire solo con le unità che conosce direttamente
+\end{itemize}
+
+Ovvero, data una classe C con un metodo f, questo metodo dovrebbe chiamare solo:
+\begin{itemize}
+	\item C
+	\item Un oggetto creato da f
+	\item Un oggetto passato come argomento ad f
+	\item Un oggetto in un'istanza di C
+\end{itemize}
+
+\subsection{Incidenti ferroviari}
+\lstinputlisting[language=java]{code/040}\label{code: 040}
+Questo tipo di codice è chiamato incidente ferroviario perchè sembrano due treni che si sono scontrati e si sono accartocciati fino a diventare una cosa sola.
+
+Questo stile di programmazione è da evitare, sarebbe meglio dividere le chiamate così
+\lstinputlisting[language=java]{code/041}\label{code: 041}
+
+Se questo insieme viola la legge di Demetra dipende se ctxt, Options e ScratchDir sono oggetti o strutture dati. Se sono oggetti, le loro strutture interne dovrebbero essere nascoste e quindi la conoscenza dell'interno è chiaramente una violazione della legge. Se sono strutture dati senza comportamenti, allora esporranno naturalmente le loro strutture interne, e quindi la legge non si applica.
+
+\subsection{Ibridi}
+Certe volte vengono create classi che sono anche strutture dati, presentano varaibili pubbliche e private, accessori di ogni tipo e funzioni significative. Sono da evitare, è un caso di \href{https://refactoring.guru/smells/feature-envy}{"feature envy"}, ovvero metodi che chiamano funzioni o attributi di altre classi più della propria.
+
+\subsection{Nascondere le strutture}
+Se comunichiamo con un oggetto dovremmo dirgli di fare qualcosa, non dovremmo chiedere i suoi dettagli interni.
+
+Ad esempio, nel caso delle chiamate di prima, ottenevamo il percorso assoluto di un file, un errore gigantesco. In più cosa dobbiamo farci? Se volessimo creare un nuovo file non sarebbe meglio fare così?
+\lstinputlisting[language=java]{code/042}\label{code: 042}
+In questo modo i dettagli sull'implementazione sarebbero nascosti.
+
+\section{Data Transfer Object (DTO)}
+un DTO è una struttura dati molto utile, specialmente quando si comunica col database o si devono elaborare dei dati prima di presentarli. I loro campi sono pubblici e utilizzabili.
+
+Sono comuni anche i "bean", oggetti con variabili private ma con getter e setter.
+\lstinputlisting[language=java]{code/043}\label{code: 043}
+
+\subsection{Active records}
+Sono tipi speciali di DTO. Hanno strutture dati con variabili pubbliche o accessibili ma solitamente hanno metodi come salva e trova. Spesso sono traduzioni dirette del database.
+
+\chapter{Gestione errori}
+La gestione errori è importante ma se offusca la logica allora c'è un problema.
+
+\section{Usare le eccezioni invece del return}
+Una volta, quando non c'era una gestione delle eccezioni come ora, si usavano dei flag per segnalare gli errori. Al giorno d'oggi possono essere sollevate eccezioni che rendono la vita molto più semplice e, soprattutto, possono rendere il codice più comprensibile.
+
+\section{Scrivere il blocco Try-Catch-Finally prima di tutto}
+Il blocco catch deve permettere l'uscita dal metodo in uno stato consistente, indipendentemente da cosa sia successo nel try.
+
+\section{Usare eccezioni non controllate}
+Le eccezioni controllate violano il principio Open/closed perchè creano più uscite. Se si solleva un'eccezione e viene mandata tre livelli sopra allora si dovrà inserire nell'intestazione di tutti i metodi della catena.
+
+\section{Offrire un contesto con le eccezioni}
+Le eccezioni dovrebbero offrire abbastanza informazioni da consentire di comprendere cosa le abbia scatenate. Lo stacktrace è utile ma non è l'unica fonte, anche un messaggio significativo è ottimo.
+
+\section{Definire le classi di eccezioni in termini dei bisogni del chiamante}
+Ci sono molti modi per classificare gli errori. Possiamo classificarli dalla loro fonte o per il loro tipo. La cosa, però, realmente più importante in questo contesto è "come sono catturati"?
+
+Ora vediamo un esempio di pessima classificazione in una libreria:
+\lstinputlisting[language=java]{code/044}\label{code: 044}
+
+Questo blocco di codice contiene molte ripetizioni. In questo caso possiamo racchiudere le eccezioni in un tipo generico che però contenga una descrizione dell'errore. 
+
+\lstinputlisting[language=java]{code/045}\label{code: 045}
+Rinchiudere in un wrapper le eccezioni derivanti da una libreria di terze parti può essere molto comodo. In più permette di non dover dipendere dalle scelte di design di qualcun altro.
+
+\section{Non ritornare null}
+Mai e poi mai ritornare null. Rendere un programma null safe è essenziale per evitare la maggior parte degli errori.
+
+Usare un optional o, ad esempio, una emptyList, sono metodi per poter permettere al flow del programma di non incontrare una NullPointerException.
+
+\chapter{Limiti}
+\section{Usare codice di terze parti}
+Speso nella scrittura del codice da poter implementare da terze parti si pensa all'uso più generico possibile che può essere fatto mentre l'utente ha bisogno di un uso specifico. In cosa si traduce questo? Nel dover pensare a come rendere specifico questo codice per evitare problemi. Ad esempio
+\lstinputlisting[language=java]{code/046}\label{code: 046}
+Il codice non è perfettamente leggibile, il typecast è una pezza messa alla generalità della mappa. Potrebbe essere risolto rendendo specifica la mappa
+\lstinputlisting[language=java]{code/047}\label{code: 047}
+Ma in questo caso non verrebbe risolto un problema essenziale: Map fornisce più funzioni di quelle che vogliamo, tra cui clear, attivabile da chiunque. Come possiamo allora nascondere questo problema implementativo? Semplice, mascherandolo in una classe apposita che si occupi di typecast, gestione degli accessi ecc.
+\lstinputlisting[language=java]{code/048}\label{code: 048}
+In questo modo l'utente non deve preoccuparsi di certi dettagli implementativi, di dover stare attento a cosa venga ritornato ecc. ma invece può usare in maniera naturale la classe Sensor.
+
+\section{Esplorare e comprendere i confini}
+Quando ci si trova a implementare una libreria di terze parti si possono passare giorni a leggerne la documentazione ma non è detto che ciò che si pensa faccia la libreria e ciò che fa veramente siano la stessa cosa. Per questo motivo, prima di generare bug complicati, sarebbe meglio creare delle suite di test per testare le funzioni richieste alla libreria e vedere se il comportamento atteso è quello effettivo o no. Questo metodo, per quanto tedioso, può risparmiare molto tempo più avanti.
+
+\subsection{Conoscere log4j e slf4j}
+Per fare un esempio, uno potrebbe pensare "beh, se inizializzo il logger e dico di loggare sono a posto" e invece no
+\lstinputlisting[language=java]{code/049}\label{code: 049}
+Questo codice restituisce un errore in quanto il Logger ha bisogno di un appender. Allora viene aggiunto ciò
+\lstinputlisting[language=java]{code/050}\label{code: 050}
+
+Ma a quanto pare ha bisogno di un output stream, allora aggiungiamo
+\lstinputlisting[language=java]{code/051}\label{code: 051}
+E ora funziona! Ora però rimuovendo l'output stream continua a funzionare ma non rimuovendo il pattern, strano. Studiando ancora la configurazione scopriamo che semplicemente il Logger non era configurato, cosa che non è altamente intuitiva. Ancora un po' di ricerca e raggiungiamo questa classe di test che rappresenta la conoscenza acquisita
+\lstinputlisting[language=java]{code/052}\label{code: 052}
+
+\section{I test di apprendimento sono ottimi}
+Questi test, oltre a darci un'ottima conoscenza la prima volta, ci permettono di tenere sotto controllo anche eventuali aggiornamenti. Infatti ad ogni nuova release ci basta far partire nuovamente i test per controllare che tutto sia come prima. In questo modo abbiamo anche un ottimo rientro sull'investimento.
+
+\chapter{Unit test}
+\section{Le tre leggi del test driven development}
+\begin{enumerate}
+	\item Non scriverai codice in produzione fino a quando non avrai scritto il codice per testarlo
+	\item Non scriverai più di un test che debba fallire e la non compilazione è un fallimento
+	\item Non scriverai più codice di quanto non sia strettamente necessario per passare il test
+\end{enumerate}
+
+\section{Mantenere i test puliti}
+Non bisogna minimamente pensare che i test non debbano essere scritti con meno cura rispetto al codice originale.
+
+\section{I test abilitano la flessibilità del codice}
+Quando modifichiamo del codice possiamo avere paura di introdurre bug inattesi. L'avere degli unit test pronti per controllare che non vengano introdotti bug inaspettati è ciò che ci permette di rendere il nostro codice flessibile, riutilizzabile, mantenibile, senza avere preoccupazioni aggiuntive.
+
+\section{Test puliti}
+La caratteristica più importante di un test è che sia leggibile. Ad esempio, guardiamo questi test:
+\lstinputlisting[language=java]{code/053}\label{code: 053}
+Guardiamo ad esempio PathParser. Trasforma la stringa in un'istanza usata dal crawler. QUesta trasformazione è inutile per quanto riguarda il test.
+
+Ora vediamo un miglioramento:
+\lstinputlisting[language=java]{code/054}\label{code: 054}
+è molto più semplice da leggere, il pattern build-operate-check rende ovvia la struttura del test: ogni test è diviso in tre fasi, nella prima si costruiscono i dati di test, nella seconda si opera su di essi, nella terza si testano.
+
+\section{Doppio standard}
+Ci si deve sempre ricordare una cosa: l'ambiente locale e l'ambiente di produzione hanno esigenze e capacità completamente differenti. Ad esempio in produzione il codice deve essere efficiente, deve richiedere le risorse minime necessarie e deve essere rapido. Sull'ambiente locale, dove i test saranno fatti girare, non ci sono spesso questi limiti. Per questo quando scriviamo codice dobbiamo sempre chiederci "dove verrà usato?".
+
+\section{Un assert per test}
+Un test non deve testare vari stati male, ne deve testare uno bene, un po' come per le funzioni che devono effettuare solo una cosa. Il vantaggio di ciò è la leggibilità.
+
+\section{Un solo concetto per test}
+Una regola ancora migliore, da cui la precedente deriva come ovvia conseguenza, è che ogni test dovrebbe testare un solo concetto alla volta.
+
+\section{F.I.R.S.T.}
+\begin{itemize}
+	\item[] \textbf{Fast}: i test dovrebbero essere veloci da eseguire, questo perchè se sono lenti non si è portati ad eseguirli spesso, il che può portare a non risolverli velocemente
+	\item[] \textbf{Indipendenti}: i test non dovrebbero dipendere dagli altri, ogni test dovrebbe essere atomico e non avere effetti collaterali per gli altri 
+	\item[] \textbf{Ripetibile}: dovrebbero essere eseguibili in ogni ambiente  
+	\item[] \textbf{Auto validante}: Il test dovrebbe avere un output booleano, ovvero lo passa o non lo passa 
+	\item[] \textbf{Tempestivo}: i test dovrebbero essere scritti appena prima che il codice venga scritto 
+\end{itemize}
+
+\chapter{Classi}
+\section{Organizzazione}
+Le classi, secondo la convenzione Java, seguono l'ordine descritto a pagina \pageref{par: formattazioneVerticale}.
+
+\subsection{Incapsulamento}
+Le variaibli e i metodi ausiliari dovrebbero essere privati, al massimo protetti se ne abbiamo bisogno all'interno della suite di test.
+
+\section{Le classi dovrebbero essere piccole}
+Una classe con, ad esempio, 70 metodi pubblici, forse è un po' troppo, arriva a livello di \href{https://en.wikipedia.org/wiki/God_object}{God class}, ovvero una classe con fin troppe responsabilità.
+
+\section{Principio di singola responsabilità}
+Ogni classe dovrebbe avere una sola responsabilità e un solo motivo per cambiare. Ad esempio
+\lstinputlisting[language=java]{code/055}\label{code: 055}
+In questo caso la classe ha due ragioni per cambiare:
+\begin{enumerate}
+	\item controlla le informazioni che devono essere aggiornate ogni volta che il software viene rilasciato
+	\item gestisce i componenti Java Swing
+\end{enumerate}
+
+Questa versione è decisamente meglio
+\lstinputlisting[language=java]{code/056}\label{code: 056}
+Questo rende le classi più indipendenti, più modellabili e permette di gestire meglio l'intero progetto.
+
+\subsection{Coesione e dipendenza}
+\begin{figure}[h!]
+	\begin{center}
+		\includegraphics[scale=0.6]{img/002.png}
+		\caption{Legami e coesione}
+		\label{fig: 002}
+	\end{center}
+\end{figure}
+Per spiegare la differenza, la coesione rappresenta la forza del modulo, quanto esso possa fare e come venga effettuato. I legami (o dipendenza) è come i vari moduli interagiscono tra di loro.
+Idealmente noi vorremmo alta coesione e passa dipendenza.
+
+All'interno del modulo con alta coesione abbiamo un'alta dipendenza tra le classi, per mantenerla efficacemente possiamo dividere il programma in molte piccole classi che abbiano una singola responsabilità e che si richiamino tra di loro.
+
+\section{Organizzare per un cambiamento}
+Quando scriviamo una classe possiamo anche non implementarla subito perchè magari non abbiamo ancora i dettagli implementativi o perchè serve solo come placeholder per il momento. Ad esempio questa classe per la gestione SQL:
+\lstinputlisting[language=java]{code/057}\label{code: 057}
+Quando ci troveremo ad implementarla, però, potremo ragionare sul suo design. Sembra una classe che effettivamente segua il principio di responsabilità all'inizio ma poi, quando guardiamo meglio, sembra che ci siano dei metodi privati che vadano in realazione solo con il metodo select, è quindi un piccolo subset di comportamenti.
+
+In più leggere questa classe richiede tempo, è voluminosa e ha svariate funzioni. Se invece prendessimo un approccio diverso, ovvero più frazionato ma che rispetti appieno il principio di singola responsabilità?
+\lstinputlisting[language=java]{code/058}\label{code: 058}
+Ora abbiamo, invece di una singola classe con metodi diversificati e metodi usati solo da alcuni di questi, un gruppo di classi che rispettano sia il principio di singola responsabilità sia quello dell'open close. In questo modo è anche più testabile, meno prono ad errori di diffusione.
+
+\chapter{Sistemi}
+\section{Separare il costruire un sistema dall'usarlo}
+\subsection{Separazione del Main}
+Nel Main possiamo costruire i vari moduli che poi verranno passati alla nostra applicazione, in questo modo il flow è molto più controllabile.
+
+\subsection{Factory}
+Le factory possono essere utilizzate per creare oggetti quando richiesto ma senza doverne inserire la costruzione all'interno del codice principale.
+
+\subsection{Dependecy injection}
+Alla base di ciò c'è l'inversione di controllo, ovvero muove le repsonsabilità secondarie da un oggetto ad un altro il cui scopo è gestire ciò. Un oggetto non dovrebbe occuparsi del gestire le sue dipendenze. Ad esempio, durante l'inizializzazione non si chiede per le dipendenze ma sarà il sistema a fornirle direttamente.
+
+\chapter{Emergenza}
+Secondo Kent Beck ci sono quattro regole che permettono di scrivere un software progettato correttamente e il cui uso possa emergere nella lettura.
+\begin{enumerate}
+	\item Far girare tutti i test
+	\item Non deve contenere duplicazioni
+	\item Esprime le intenzioni del programmatore
+	\item Minimizza il numero di classi e metodi
+\end{enumerate}
+
+\section{Regola numero 1: Far girare tutti i test}
+Un sistema che passa tutti i test è un sistema testabile e che lavora come richiesto.
+
+Troppe dipendenze rende difficile creare test.
+
+\section{Regole 2-4: refactoring}
+Ora che abbiamo un codice testabile possiamo raffinarlo senza la paura di non notare un errore che spacchi tutto.
+
+\section{Niente duplicazioni}\label{par: duplicazione}
+Ogni duplicazione di codice è un errore per due motivi:
+\begin{itemize}
+	\item è uno spreco cognitivo
+	\item se un bug insorge da una parte e viene corretto solo lì, le altre rimarranno scoperte
+\end{itemize}
+
+In certi casi la duplicazione non è evidente fino a quando non si ragiona:
+\lstinputlisting[language=java]{code/059}\label{code: 059}
+è uno spreco in quanto si può tranquillamente scrivere
+\lstinputlisting[language=java]{code/060}\label{code: 060}
+
+Il \href{https://refactoring.guru/design-patterns/template-method}{design pattern template} è un metodo usato tipicamente per rimuovere le duplicazioni ad alto livello:
+\lstinputlisting[language=java]{code/061}\label{code: 061}
+
+\section{Espressività}
+Tutto ciò che è stato detto fino ad ora sono consigli su come rendere il codice espressivo:
+\begin{itemize}
+	\item scegliere nomi espressivi
+	\item creare metodi brevi e semplici
+	\item usare nomenclatura standard se esiste, ad esempio strategy
+	\item scrivere unit test comprensibili
+\end{itemize}
+
+\section{Classi e metodi minimali}
+Cercare di tenere tutto di lunghezza ragionevole permette di capire l'atomicità delle azioni effettuate al loro interno, in questo modo è anche più semplice seguire il flusso, soprattutto con nomi corretti e autoesplicativi.
+
+\chapter{Concorrenza}
+La concorrenza è sempre difficile, sia scriverela bene e senza che si rompa. Ci sono una serie di raccomandazioni per cercare di renderla più semplice.
+
+\section{Miti ed errori concettuali}
+\subsection{La conccorenza migliora sempre le performance}
+Non sempre, solo se c'è tanto tempo d'attesa che i thread possono condividere
+
+\subsection{Il design non cambia quando si scrive un programma concorrente}
+Un algoritmo classico è molto differente se creato in maniera concorrente. La divisione di cosa debba essere fatto e quando ha solitamente un forte effetto sul design
+
+\subsection{Comprendere i problemi di concorrenza non è importante quando si lavora ad esempio su di una rete}
+In realtà sapere cosa potrebbe bloccarlo è essenziale
+
+\subsection{Cose vere}
+\begin{itemize}
+	\item la concorrenza crea dell'overhead in performance e codice
+	\item La concorrenza è complessa per ogni problema
+	\item i bug derivanti dalla concorrenza non sono spesso ripetibili, quindi sono spesso ignoranti come casi isolati
+	\item la concorrenza spesso richiede un cambio fondamentale di design
+\end{itemize}
+
+\section{Sfide}
+Immaginiamo che questo pezzo di codice sia condiviso tra due thread:
+\lstinputlisting[language=java]{code/062}\label{code: 062}
+Non sappiamo in che ordine due thread toccheranno lastIdUsed, questo perchè le elaborazioni di due thread possono seguire differenti percorsi. Potremmo trovarci quindi in una situazione nella quale due thread toccano allo stesso momento lastIdUsed e così generano un problema di coerenza.
+
+\section{Principi per la difesa dalla concorrenza}
+\subsection{Principio di singola responsabilità}
+\begin{itemize}
+	\item Il codice legato alla concorrenza ha il suo ciclo di sviluppo, cambiamento e perfezionamento
+	\item Il codice legato alla concorrenza ha le sue sfide che sono diverse e più difficili rispetto a quelle date da codice non concorrente
+	\item Il numero di modi nei quali un codice legato alla concorrenza scritto male può fallire rende più complicata la sua analisi.
+\end{itemize}
+
+Raccomandazione: mantenere il codice legato alla concorrenza separato da altro codice.
+
+\subsection{Limitare la condivisione delle risorse}
+Il primo trucco da adottare è vedere se c'è un accessore che permetta al compilatore di comprendere che una risorsa deve essere soggetta ad operazioni atomiche, ovvero non interrompibili (e.g. synchronized in Java). In più si dovrebbe cercare di ridurre il numero di utilizzi di sezioni critiche in quanto:
+\begin{itemize}
+	\item prima o poi queste sezioni di codice verranno aggiornate e quando anche una sola verrà dimenticata il codice si romperà
+	\item alto rischio di duplicazione di codice
+	\item Sarà difficile trovare la fonte degli errori
+\end{itemize}
+L'incapsulazione è un'ottima soluzione.
+
+\subsection{Usare copie dei dati}
+Una possibilità per evitare problemi di concorrenza è copiare i dati da passare ai vari thread in modalità sola lettura oppure passare i dati a tutti i thread, permettere di modificarli indipendentemente e poi avere un thread che si occupi della discriminazione dei risultati per poi unirli.
+
+\subsection{I thread dovrebbero essere indipendenti}
+Ogni thread dovrebbe avere i suoi dati non condivisi e lavorare indipendentemente dagli altri.
+
+\section{Conoscere le librerie}
+Le librerie possono offrire soluzioni thread safe. In java vanilla ci sono \emph{java.util.concurrent, java.util.concurrent.atomic, java.util.concurrent.locks}.
+
+\section{Conoscere i modelli di esecuzione}
+Per capire come eseguire certi lavori prima dobbiamo capire i rischi della concorrenza:
+\begin{table}[]
+\begin{tabular}{|l|l|}
+\hline
+\textbf{Risorse bloccata} & \begin{tabular}[c]{@{}l@{}}Risorse di una grandezza limitata o valori usati\\ in un ambiente concorrente. Ad esempio le\\ connessioni ad un DB\end{tabular}                                                                                 \\ \hline
+\textbf{Mutua esclusione}  & \begin{tabular}[c]{@{}l@{}}Un solo thread può accedere ai dati condivisi\\ o una risorsa condivisa alla volta\end{tabular}                                                                                                                  \\ \hline
+\textbf{Starvation}        & \begin{tabular}[c]{@{}l@{}}Un thread o un gruppo di thread non possono\\ procedere per un tempo eccessivo. Ad esempio,\\ permettere sempre i thread più veloci per primi\\ può portare a non lasciare tempo a quelli più lenti\end{tabular} \\ \hline
+\textbf{Deadlock}          & \begin{tabular}[c]{@{}l@{}}Due o più thread si attendono a vicenda per\\ terminare\end{tabular}                                                                                                                                             \\ \hline
+\textbf{Livelock}          & \begin{tabular}[c]{@{}l@{}}Due thread provano a portare avanti il lavoro\\ ma trovano sempre l'altro thread "sulla strada"\end{tabular}                                                                                                     \\ \hline
+\end{tabular}
+\end{table}
+
+\subsection{Produttore-consumatore}
+Uno o più thread che producono lavoro lo mettono in una coda o in un buffer. Uno o più thread acquisiscono il lavoro dalla coda e lo completano. La coda tra il produttore e il consumatore è una risorsa bloccata, ovvero il produtore deve attendere che si liberi dello spazio in coda prima di scrivervi e il consumatore deve attendere fino a quando c'è qualcosa da consumare in coda.
+
+\subsection{Lettore-scrittore}
+Quando sia ha una risorsa condivisa che serve primariamente come fonte d'informazione per i lettori ma che occasionalmente è aggiornata dagli scrittori, la quantità di dati scritta  un problema. Enfatizzare il flusso dati in entrata può provocare starvation e l'accumulazione di informazioni non aggiornate.
+
+Il problema è bilanciare lettura e scrittura in modo che i dati siano sempre aggiornati per i lettori e che gli scrittori possano aggiornarli. Una classica strategia è attendere che non ci siano lettori per permettere allo scrittore di andare avanti.
+
+\subsection{La cena dei filosofi}
+Immaginiamo dei filosofi attorno ad un tavolo. Una forchetta è alla sinistra di ogni filosofo e c'è una ciotola di pasta al centro del tavolo. I filosofi continuano a pensare fino a quando non hanno fame. Quando sono affamati prendono una forchetta da un qualsiasi lato e mangiano. Un filosofo non può mangiare a meno che non stia tenendo due forchette. Se un filosofo al proprio fianco sta usando le posate deve attendere. Una volta che il filosofo ha mangiato rimette le posate a posto.
+
+Questo è un classico esempio di deadlock, livelock. Un modo per risolverla è l'uso di un semaforo per le risorse.
+
+\section{Attenzione alle dipendenze tra metodi sincronizzati}
+Se più thread condividono le stesse risorse è possibile che ci sia un problema di design.
+
+Ci saranno volte che si sarà costretti ad usare risorse condivise, in quel caso si possono tenere a mente certi principi:
+\begin{itemize}
+	\item Lock basato sul client: il client blocca la catena di chiamate
+	\item Lock basato sul server: All'interno del server si crea un metodo che blocchi il server.
+	\item Server adattivo: Crea un intermediario che si occupa del blocco
+\end{itemize}
+
+\section{Mantenere le sezioni sincronizzate piccole}
+Se una sezione sincronizzata fosse troppo grossa diventerebbe un collo di bottiglia. Immaginiamo che più persone debbano passare da una fessura, una sola alla volta: se la fessura è corta allora il tempo di attesa sarà minimo, se invece è troppo lunga il tempo si estende, bloccando tutte le altre persone. Uguale per i thread con le sezioni sincronizzate.
+
+\section{Scrivere bene del codice di terminazione è difficile}
+Una cosa è scrivere un sistema che debba lavorare per un tempo indefinito, un'altra scrivere un codice che si spenga in maniera aggraziata.
+
+Alcuni thread magari sono in attesa di segnali che non arrivano, oppure processi genitori che attendono tutti i figli ma alcuni di questi sono in deadlock e quindi il processo genitore aspetterà per sempre\footnote{Chi l'avrebbe mai detto che un dramma familiare potesse bloccare un programma dallo spegnersi}.
+
+\section{Testare codice multithreaded}
+Una checklist possibile per testare il codice in maniera sicura:
+\begin{enumerate}
+	\item Trattare i bug sporadici come possibili problemi di multithreading
+	\item Testare prima il codice non multithreaded
+	\item Rendere il codice multithreaded inseribile
+	\item Rendere il codice multithreaded aggiustabile
+	\item Testarlo con più thread che processori
+	\item Testarlo su più piattaforme
+	\item Creare test che possano forzare i fallimenti
+\end{enumerate}
+
+\subsection{Trattare i bug sporadici come possibili problemi di multithreading}
+Non bisogna ignorarli pensando che siano casi isolati. Per quanto possano essere rari e per quanto possa essere difficile scatenarli, non bisogna darsi per vinti.
+
+\subsection{Testare prima il codice non multithreaded}
+Se non funziona il codice non threaded allora perchè dovremmo concentrarci sul renderlo multithreaded?
+
+\subsection{Rendere il codice multithreaded inseribile}
+Scrivere il codice in modo che sia configurabile:
+\begin{itemize}
+	\item Un thread, più thread, variati in base all'esecuzione
+	\item Il thread interagisce con qualcosa che può essere reale o un doppio per il test
+	\item Eseguire il test con casi veloci, lenti, variaibli
+	\item Configurare i test in modo che possano essere eseguiti per un numero di interazioni
+\end{itemize}
+
+\subsection{Rendere il codice multithreaded aggiustabile}
+Trovare il giusto equilibrio di thread solitamente è un lavoro di svariate prove. Il trucco è trovare un modo di misurare le performance.
+
+\subsection{Testarlo con più thread che processori}
+QUando il computer passa da un task all'altro possono accadere cose, per questo è meglio incentivare questo cambio tramite la creazione di più thread di quanti gestibili.
+
+\subsection{Testarlo su più piattaforme}
+DIfferente sistema operativo, differente sistema di gestione dei thread. Testarlo su più sistemi permette di capire quali siano le parti incriminate.
+
+\subsection{Creare test che possano forzare i fallimenti}
+In certi casi bisogna forzare dei casi limite. ome fare? Ci sono ad esempio \emph{Object.wait(), Object.sleep(), Object.yield(), Object.priority()} che possono modificare il flusso dei thread. Ci sono due opzioni qua:
+\begin{itemize}
+	\item scriverlo a mano
+	\item automatizzarlo
+\end{itemize}
+
+\subsubsection{Scriverlo a mano}
+Questa è la via da scegliere quando si vuole testare un pezzo specifico di codice. Ad esempio:
+\lstinputlisting[language=java]{code/063}\label{code: 063}
+La chiamata a yield() cambia l'esecuzione e probabilmente ne causa il fallimento. Se il codice salta non è però a causa dello yield. CI sono svariati problemi con questo approccio:
+\begin{itemize}
+	\item devi trovare i punti appropriati
+	\item come si fa a sapere quali chiamate fare e dove?
+	\item lasciare questo codice in produzione rallenta tutto
+	\item è un approccio shotgun: potresti non trovare i difetti o no ma le probabilità non sono dalla tua
+\end{itemize}
+
+\subsubsection{Automatizzato}
+Si possono usare framework appositi per programmare queste chiamate nel codice. Ad esempio con un solo metodo
+\lstinputlisting[language=java]{code/064}\label{code: 064}
+Che venga chiamato in più punti
+\lstinputlisting[language=java]{code/065}\label{code: 065}
+Ora si ha un semplice aspetto che sceglie se fare niente, andare in sleep o prendere la precedenza.
+
+Oppure potremmo avere due implementazioni: una in produzione che fa niente e una per il test che genera numeri a caso e sceglie cosa fare. Se si esegue il test migliaia di volte i risultati varieranno.
+
+C'è un programma di IBM chiamato \href{http://www.alphaworks.ibm.com/tech/contest}{ConTest} che fa esattamente ciò.
+
+\chapter{\href{https://refactoring.guru/refactoring/smells}{Code smells} ed euristica}
+\section{Commenti}
+\subsection{Informazione inappropriata}
+In certi casi le informazioni non andrebbero incluse all'interno dei commenti ma, ad esempio, dei servizi di versionamento. I commenti che diventano obsoleti con l'evoluzione del codice tendono a rimanere se sono inseriti direttamente nel codice.
+
+\subsection{Commento obsoleto}
+Se un commento non è più attuale è meglio cancellarlo o modificarlo.
+
+\subsection{Commenti ridondanti}
+Stesso esempio a pagina \pageref{code: 033}
+
+\subsection{Commenti scritti male}
+Un commento sgrammaticato è il peggior commento che ci sia.
+
+\subsection{Codice commentato}
+Meglio cancellare parti di codice tramite sistema di versionamento e non commentandole, diventano solo un peso per la struttura poi.
+
+\section{Ambiente}
+\subsection{La build richiede più di uno step}
+Fare una build dovrebbe essere una singola operazione triviale.
+
+\subsection{I test richiedono più di uno step}
+Lanciare un test dovrebbe essere un'operazione che richiede, come per la build, una singola istruzione, che sia un comando una shell o un bottone in un'IDE.
+
+\section{Funzioni}
+\subsection{Troppi argomenti}
+Stessa spiegazione vista da pagina \pageref{par: argomenti funzioni}.
+
+\subsection{Argomenti di output}
+Stessa spiegazione vista da pagina \pageref{par: output}.
+
+\subsection{Argomenti di guardia}
+Stessa spiegazione vista da pagina \pageref{par: argomenti guardia}.
+
+\subsection{Funzioni morte}
+Le funzioni che non vengono mai chiamate dovrebbero essere scartate.
+
+\section{Generali}
+\subsection{Più linguaggi in un solo file sorgente}
+Il fatto che si possa fare non vuol dire che sia una soluzione intelligente o chiara a chi legge. 
+
+\subsection{Comportamento ovvio non implementato}
+Ogni funzione dovrebbe implementare ciò che un programmatore può aspettarsi dal suo nome.
+
+\subsection{Comportamento errato sui limiti}
+Il problema di certi programmi spesso è che non viene considerato correttamente cosa potrebbe andare storto nelle situazioni limite.
+
+\subsection{Violare i limiti di sicurezza}
+I limiti ci sono per un motivo, semplicemente decidere di ignorarli per rendere più semplice la fase di testing è un errore che può costare caro.
+
+\subsection{Duplicazione}
+Vedere pagina \pageref{par: duplicazione}.
+
+\subsection{Codificare al livello di astrazione sbagliato}
+L'astrazione è ciò che ci permette di separare i vari livelli concettuali di un programma. Violarla ci impedisce di ragionare al meglio su cosa vogliamo fare, in quale caso e cosa vogliamo dire al successivo programmatore.
+
+\subsection{Troppe informazioni}
+Le interfacce non dovrebbero offrire troppe funzioni da cui dipendere. Quindi solitamente si impara a limitare cosa si espone nelle interfacce. Nascondere i dati, nascondere le funzioni di utilità, nascondere le costanti e i temporanei.
+
+\subsection{Codice morto}
+Il codice non eseguito è codice inutile. Il codice inutile appesantisce. Cancella il codice morto, merita il suo eterno riposo.
+
+\subsection{Separazione verticale}
+Le variabili e le funzioni dovrebbero essere definite vicino a dove verranno usate per la prima volta.\footnote{Dissento su questa visione dell'autore, dipende da come uno è abituato ma lo standard è dichiarare le variabili, costruttori, metodi pubblici, metodi di utilità, getter e setter}.
+
+\subsection{Inconsistenza}
+Sempre perchè il codice deve essere facilmente interpretabile, se da una parte abbiamo usato un nome per una variabile legata ad una cerca classe, allora anche dalle altre parti chiamiamo sempre allo stesso modo quella variabile e non usiamo quel nome per altre cose.
+
+\subsection{Clutter}
+Commenti che non danno informazioni, costruttori non implementati, perchè bisogna lasciare tutte queste cose che non danno informazioni? Via.
+
+\subsection{Dipendenza artificiale}
+Non inseriamo variabili o altro in posti a cui non appartengono logicamente, come ad esempio forzare un'enumerazione perchè vogliamo che funzioni in una maniera specifica in una sottoclasse. 
+
+\subsection{\href{https://refactoring.guru/smells/feature-envy}{Feature envy}}
+Una classe interessata alle variabili e ai metodi di un'altra classe è una classe non pensata correttamente.
+
+\subsection{Intenti non chiari}
+Se non si capiscce quale sia l'intento del codice semplicemente leggendolo, allora qualcosa non va. Ad esempio questo codice è da bruciare, se scrivi codice così cerca aiuto:
+\lstinputlisting[language=java]{code/066}\label{code: 066}
+
+\subsection{Responsabilità male posizionate}
+Ogni tanto mettiamo giustamente certe funzioni come statiche in altri casi no. Ora, se lavoriamo su di una libreria come Math è giustissimo, se vogliamo creare delle classi da estendere, rendere polimorfiche e quindi modificando l'implementazione, allora forse è meglio evitare.
+
+\subsection{Static dove non dovrebbe essere}
+Se un metodo non opera su di una singola istanza allora va bene che sia statico. Un problema è quando non si considera il possibile polimorfismo di una funzione, in quel caso non può essere statica in quanto sarebbe chiamata col nome della classe.
+
+\subsection{Usare variabili di spiegazione}
+\lstinputlisting[language=java]{code/067}\label{code: 067}
+Le variabili key e value sono variabili di spiegazione, ovvero si mostra in maniera diretta cosa rappresentino, il valore viene racchiuso in una variabile leggibile e chiara.
+
+\subsection{I nomi delle funzioni dovrebbero dire cosa fanno}
+Il nome di una funzione non dovrebbe lasciare dubbi sul cosa faccia, cosa prenda in ingresso e cosa verrà restituito alla fine.
+
+\subsection{Comprendere l'algoritmo}
+Prima di terminare il proprio lavoro perchè "funziona" è meglio essere sicuri di aver compreso cosa il codice da noi scritto stia facendo, il perchè funzioni e capire perchè questa soluzione è corretta. L'approccio migliore è prima arrivare ad un "funziona" e poi fare refactoring da lì.
+
+\subsection{Rendere fisiche le dipendenze logiche}
+\lstinputlisting[language=java]{code/068}\label{code: 068}
+Se un modulo dipende da un altro, la dipendenza dovrebbe essere fisica, non solo logica. Il modulo dipendente non dovrebbe fare assunzioni (ovvero dipendenze logiche) riguardo al modulo da cui dipende. Dovrebbe chiedere esplicitamente al modulo le informazioni che gli servono.
+
+Questo codice, ad esempio, ha una dipendenza logica che non è stata resa fisica: PAGE\_SIZE. Perchè questa classe dovrebbe conoscere la dimensione della pagina?
+Possiamo rendere fisica la dipendenza creando un metodo chiamato \emph{getMaxPageSize()}, questo perchè magari un'altra implementazione potrebbe avere un valore differente.
+
+\subsection{Preferire il polimorfismo a if/else o switch}
+Proposta di regola: non ci possono essere più di uno switch per un certo tipo di selezione. I casi in quello switch devono creare degli oggetti polimorfici che prendono il posto di altri switch nel resto del sistema.
+
+\subsection{Seguire convenzioni standard}
+Ogni team dovrebbe rispettare le norme generali dell'industria. Ad esempio, si dovrebbe specificare dove dichiarare le istanze, come chiamare i metodi, le classi e le variabili.
+
+\subsection{Sostituire i numeri magici con costanti}
+Ad esempio, il numero 86400 dovrebbe essere nascosto tramite una costante SECONDS\_PER\_DAY. Se si stanno stampando 55 linee per pagina, allora avremo la costante LINES\_PER\_PAGE.
+
+\subsection{Essere precisi}
+Non prendersi del tempo per pensare ai casi limite, alle ragioni per scegliere una variabile o un'altra, cosa potrebbe restituire una query, è un errore.
+
+\subsection{Struttura sopra convenzione}
+Le convenzioni sono comode però a seconda dell'ambito può esserci fin troppa licenza, ad esempio su come nominare i campi di uno switch controllo il trovarsi a dovere dare nomi precisi per una classe astratta.
+
+\subsection{Condizioni incapsulate}
+Meglio estrarre le funzioni che spiegano l'intendo di una condizione:
+\lstinputlisting[language=java]{code/069}\label{code: 069}
+è meglio di
+\lstinputlisting[language=java]{code/070}\label{code: 070}
+
+\subsection{Evitare le condizioni negative}
+\lstinputlisting[language=java]{code/071}\label{code: 071}
+è meglio di
+\lstinputlisting[language=java]{code/072}\label{code: 072}
+
+\subsection{Le funzioni dovrebbero fare una sola cosa}
+\lstinputlisting[language=java]{code/073}\label{code: 073}
+è molto meno comprensibile rispetto a
+\lstinputlisting[language=java]{code/074}\label{code: 074}
+In questo caso le funzioni sono ben separate e ci permettono di controllare in una maniera più naturale ognuna di esse.
+
+
+\end{document}

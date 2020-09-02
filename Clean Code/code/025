@@ -1,0 +1,2 @@
+// Returns an instance of the Responder being tested.
+protected abstract Responder responderInstance();

@@ -1,0 +1,3 @@
+Map<Sensor> sensors = new HashMap<Sensor>();
+...
+Sensor s = sensors.get(sensorId );
