@@ -165,6 +165,77 @@ Il codice e le informazioni importanti andrebbero protette in più modi, ad esem
 Anche proteggere la privacy è essenziale. I dati possono essere protetti tramite accesso limitato ai dati, contratti di non diffusione, ecc.
 
 \chapter{Sicurezza web app 101}
+\section{HTTP header insufficienti}
+Questa categoria è quando un header è impostato in maniera poco sicura perchè mancano alcune chiavi per mitigare certi tipi di attacco o direttamente certe voci.
+
+Ad esempio, se mancasse l'opzione X-frame si ptorebbe creare un click jacking, ovvero, poter reindirizzare i click tramite layer nascosti. Sarebbe peggio se non venissero validati degli script inseriti tramite phishing.
+
+Oppure se si utilizzano vecchie versioni di certi strumenti, lasciando aperte certe falle. COse come accedere agli stream come man in the middle o cross-site scripting sono possibili proprio per queste mancanze.
+
+Si possono prevenire certi problemi stando attenti ad esempio:
+\begin{itemize}
+	\item che si utilizzino le ultime implementazioni sicure
+	\item prestare attenzione ad alcuni header, tipo:
+	\begin{itemize}
+		\item X-XSS-Protection: abilità i filtri XSS
+		\item X-Content-Tyoe-Options: previene che si possa effettuare \href{https://www.keycdn.com/support/what-is-mime-sniffing}{MIME sniffing} alla reponse di un altro contenuto
+		\item Content-Security-Policy: copre svariate falle
+		\item X-Permitted-Cross-Domain-Polices: limita l'accesso ai dati da parte di Flash Player
+		\item Content-Type: limita i formati che possono interagire con la risorsa
+		\item X-Frame-Options: disabilità il caricamento di una risorsa in un iframe fuori dal suo dominio
+		\item Rimuovere tutti i X-Powered-By headers
+	\end{itemize}
+\end{itemize}
 
 
+\chapter{\href{https://owasp.org/www-community/attacks/}{OWASP}}
+\section{Binary planting}
+è un nome generale per un attacco nel quale un hacker piazza un file contenente del codice maligno in un sistema remoto o locale in modo da sfruttare una vulnerabilità e caricarlo. Questo attacco può accadere in vari modi:
+\begin{itemize}
+	\item Permessi d'accesso insicuri ad una cartella locale per permettere ad un attaccante di inserire del codice maligno in punti autorizzati
+	\item Un'applicazione potrebbe avere accesso a zone per inserire il codice maligno\footnote{Chissà perchè IE è visto così male, vero?}
+%	\item L'applicazione cerca ilcodice binario in posizioni non sicure, ad esempio in un sistema remoto, ad esempio un'applicazione windows che carica un DLL\footnote{Dynamic Link Library} dalla cartella corrente dopo che è stata resa una cartella condivisa
+\end{itemize}
+\section{Injection flaws}
+\subsection{SQL injection cieca}
+É un un tipo di attacco nel quale vengono fatte domande al server di tipo vero o falso e si determina la risposta in base alla risposta del server. Questo attacco viene usato spesso per le applicazioni web che mostrano errori generici ma non sono mitifate per le vulnerabilità SQL.
+
+Viene usato quando il server non mostra dati con una richiesta classica e allora bisogna trovare un modo per arginare il problema.
+\subsection{SQL injection}
+\subsection{XPath injection cieca}
+Xpath è un tipo di linguaggio di query, quindi è simile a SQL come idea. La cosa che cambia è che vada a cercare all'interno di un qualsiasi file XML senza restrizioni in quanto la nozione di Utente non esiste. L'attacco è quindi simile alla SQL injection cieca, semplicemente non ci sono restrizioni in corso.
+\section{Brute force}
+Questo attacco si può manifestare in molti modi ma primariamente consiste nel configurare dei valori prestabiliti e continuare a fare richieste al server con quei valori per poi analizzare le risposte. Si potrebbe usare un attacco basato su di un dizionario.
+\section{Buffer overflow tramite variabili d'ambiente}
+Una volta che l'hacker comprendere come modificare le variabili d'ambiente, potrebbe provare a creare un overflow sul buffer collegato. Per questo attacco ci sono dei requisiti:
+\begin{itemize}
+	\item l'applicazione deve usare variabili d'ambiente
+	\item le variabili d'ambiente sono esposte all'utente e sono vulnerabili per un buffer overflow
+	\item l'ambiente vulnerabile usa dati non sicuri
+	\item i dati non sono propriamente validati
+\end{itemize}
+
+\section{Buffer overflow}
+COnsiste nel modificare il buffer dei dati riscrivendo certi segmenti di memoria o dei processi, generando errori a catena.
+
+\section{CORS\footnote{Cross-Origin Resource Sharing} OriginHeaderScrutiny}
+É una feature che permette di:
+\begin{itemize}
+	\item Per un'applicazione web di esporre risorse a tutti o ad un dominio ristretto
+	\item Ad un web client di eseguire richieste AJAX per risorse di altri domini
+\end{itemize}
+
+Il rischio qua è che venga inserito un qualsiasi valore all'interno dell'header HTTP Origin per forzare un'applicazione web ad offrire il contenuto richiesto. 
+
+\section{CORS RequestPreflighScrutiny}
+
+
+\section{Password enumeration}
+É un attacco nel quale l'hacker prova a comprendere se un utente è all'interno del sistema o no.
+
+\section{Session handling}
+\section{Autenticazione}
+\section{Business logic}
+
+\section{•}
 \end{document}
