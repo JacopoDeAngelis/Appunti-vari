@@ -183,7 +183,33 @@ Capita a tutti di essere in ritardo, tutti.
 Qualcuno vuole aiutarti? Accetta. La persona non sta aiutando veramente? Dopo un po' gentilmente falli tornare al loro posto. C'è qualcuno che puoi aiutare? Aiutarlo. Insomma, sii un buon essere umano.
 
 \chapter{Test Driven Development (TDD)}
+\section{Le tre leggi del TDD}
+\begin{enumerate}
+	\item Non puoi scrivere codice in produzione se non hai scritto prima un test che fallisca
+	\item Non puoi scrivere altri unit test rispetto a quelli sufficienti e non compilare è un fallimento
+	\item Non puoi scrivere altro codice in produzione rispetto a quello sufficiente per far passare i test
+\end{enumerate}
 
+\section{I benefici}
+\subsection{La certezza}
+Avere tanti test non è sbagliato, anzi, è un'ottima cintura di sicurezza. Appena si cambia qualcosa nel codice basta eseguire i test e possiamo sapere immediatamente se abbiamo rotto qualcosa o no.
 
+In più se vuoi modificare una funzione per renderla più efficiente ma hai paura di rompere qualcosa, i test diventano la tua rete di sicurezza.
+
+\chapter{Acceptance testing}
+Prima di tutto: tutti vorrebbero sapere subito precisamente cosa ci sarà da fare e come farlo. Realtà: impossibile.
+
+C'è sempre un elemento di incertezza in stime e proposte.
+
+Una delle prime cose da ricordare è che nell'ambiguità si creano problemi. Quando si risponde su supposizioni e non certezze si rischia di creare un problema per il futuro.
+
+\section{Acceptance test}
+Un acceptance test è quello che viene scritto assieme agli stakeholders per decidere quando un requisito è completato.
+
+\subsection{Definition of done}
+Ci sono svariate definizioni in base alle aziende, una definizione usata comunemente è "è finito quando il codice è scritto, passa i test, QA e gli stakeholders hanno accettato".
+
+\subsection{Automazione}
+I test di accettazione dovrebbero essere sempre automatizzati, controllare e testare ogni volta costa. Tanto.
 
 \end{document}
