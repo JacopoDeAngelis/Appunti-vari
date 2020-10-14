@@ -212,4 +212,75 @@ Ci sono svariate definizioni in base alle aziende, una definizione usata comunem
 \subsection{Automazione}
 I test di accettazione dovrebbero essere sempre automatizzati, controllare e testare ogni volta costa. Tanto.
 
+I test andrebbero fatti dalle BU e dai QA, non sempre è così purtroppo. Il ruolo dello sviluppatore è testare il sistema con i nuovi AT e vedere come vada.
+
+Ricordiamo una cosa: gli acceptance test non sono unit test. I secondi sono scritti dai programmatori per i programmatori. I primi sono scritti dal business per il business. 
+
+E per le GUI? Meglio creare un sistema di API sotto da testare rispetto al creare delle chiamate all'interfaccia.
+
+\chapter{Strategie di testing}
+\href{https://github.com/JacopoDeAngelis/Appunti-vari/blob/master/Testing/Testing.pdf}{Qua} un pratico riassunto.
+\section{QA}
+I QA non dovrebbero trovare nulla ma dopotutto il loro lavoro è anche il pensare in maniera non normale, troveranno sempre qualcosa.
+
+Sono parte del team, non sono avversari.
+
+Sono coloro i quali scrivono le vere specifiche e i veri requisiti per il sistema.
+
+Sono quelli che si occupano del \href{http://www.satisfice.com/articles/what_is_et.shtml}{testing esplorativo}.
+
+\section{La piramide del testing}
+\begin{figure}[h!]
+	\begin{center}
+		\includegraphics[scale=0.6]{img/003.png}
+		\caption{Piramide del testing}
+		\label{fig: 003}
+	\end{center}
+\end{figure}
+
+\subsection{Unit test}
+Questi test servono per testare il sistema al livello più basso e in maniera atomica. Sono eseguiti ad ogni ciclo di CI\footnote{Continuous Integration}.
+
+La loro copertura dovrebbe essere del 100\%.
+
+\subsection{Component test}
+Un component test si occupa di passare dei dati ad un component e leggere l'output. SI utilizza un sistema di mocking per rendere l'unità isolata dal resto in modo da testare solo essa.
+
+\subsection{Integration test}
+Non testano il codice, testano come tutto sia coordinato correttamente tra i vari elementi.
+
+\subsection{Test di sistema}
+Controllano che nell'esperienza utente tutto sia dove deve essere.
+
+\subsection{Esplorazione manuale}
+Qua è quando gli esseri umani decidono di spaccare tutto e farlo venendo pagati. I tester per ciò non sono nostri nemici, non è vero che "ah, chi mai farebbe una cosa del genere" perchè se c'è qualcosa che internet ha insegnato è che la gente ogni tanto si diverte anche solo a creare problemi.
+
+\chapter{Gestione del tempo}
+\section{Meeting}
+I meeting sono essenziali e sono anche potenzialmente una perdita di tempo. Non serve andare a tutti gli incontri se questi non sono necessari come non è necessario rimanere fino alla fine se non è più richiesto il proprio input.
+
+\subsection{Stand up}
+Semplici incontri di quindici minuti dove si deve dire:
+\begin{itemize}
+	\item cosa si è fatto ieri
+	\item cosa si farà oggi
+	\item che problemi sono stati incontrati
+\end{itemize}
+
+Basta, eventuali discussioni saranno per il post riunione
+
+\subsection{Planning}
+Sono incontri nei quali si spiegano i nuovi requisiti e in gruppo si stima quando può richiedere in giorni uomo.
+
+Si discute anche del backlog degli sviluppatori e se rifiutarle o continuarle.
+
+\subsection{Retrospective e demo}
+Si esegue alla fine di ogni sprint e serve per vedere cosa è andato bene, cosa male e cosa si può fare per migliorarlo.
+
+\subsection{Discussioni}
+Discutere richiede sangue freddo e preparazione. Qualcuno deve gestirlo in certi casi e le parti devono arrivare documentando in maniera seria il proprio caso, non solo cercando di imporsi.
+
+\section{Stime}
+
+
 \end{document}
