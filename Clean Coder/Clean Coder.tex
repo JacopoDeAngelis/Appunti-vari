@@ -280,7 +280,73 @@ Si esegue alla fine di ogni sprint e serve per vedere cosa è andato bene, cosa 
 \subsection{Discussioni}
 Discutere richiede sangue freddo e preparazione. Qualcuno deve gestirlo in certi casi e le parti devono arrivare documentando in maniera seria il proprio caso, non solo cercando di imporsi.
 
-\section{Stime}
+\chapter{Stime}
+\subsection{Cos'è una stima?}
+Una stima è un'idea, non è un impegno strettamente parlando. Mancare una stima non è un disonore, possono essere successe cose nel frattempo.
 
+Quando viene chiesta una stima questa è accompagnata sempre da una percentuale di incertezza, non sai bene se ce la farai, la tua stima è sì ma probabilmente sai anche che possono esserci rallentamenti di vario tipo.
+
+\subsection{Stima PERT}
+In questo sistema vengono richieste tre stime:
+\begin{itemize}
+	\item O: stima ottimista, ovvero il caso nel quale tutto vada perfettamente
+	\item N: stima nominale, ovvero quella più probabile
+	\item P: stima pessimista, ovvero quella nel caso qualcosa vado male
+\end{itemize}
+
+Possiamo quindi descrivere la stima con due formule:
+$$\mu=\dfrac{O+4N+P}{6}$$
+questa è la durata attesa del compito
+$$\sigma=\dfrac{P-O}{6}$$
+Questa è la deviazione standard, è la misura dell'incertezza della stima.
+
+\section{Stimare un compito}
+Spesso una stima non è eseguita da una sola persona ma dal team.
+\subsection{Metodo wideband delphi}
+Il gruppo si riunisce, discutono, stimano e discutono sulle stime fino al raggiungimento di un consenso.
+
+Un sito comodo per eseguire queste stime nel team durante una chiamata è \href{https://www.planningpoker.com/}{Planningpoker}. Per quanto riguarda i numeri da inserire per le stime è meglio dare un range fisso in modo da non potersi scostare di troppo e poter analizzare le deviazioni in gruppo. Ad esempio si può usare la serie di Fibonacci per dare alcuni numeri standard su cui convergere.
+
+\chapter{Pressione}
+\section{Evitare la pressione}
+Il miglior modo per rimanere calmi è evitare le situazioni stressanti.
+\begin{figure}[h!]
+	\begin{center}
+		\includegraphics[scale=0.4]{img/004.jpg}
+		\caption{Ormai non serve nemmeno l'immagine completa}
+		\label{fig: 004}
+	\end{center}
+\end{figure}
+
+\subsection{Impegno}
+Come abbiamo visto nel capitolo precedente non ci si deve impegnare per stime che sono, per l'appunto, stime.
+
+In certi casi ci troviamo di fronte a promesse non fatte da noi, in quel caso non siamo tenuti ad onorare le promesse che non abbiamo fatto.
+
+\subsection{Pulizia}
+Non personale\footnote{Anche se quella non guasta} ma del codice. Non bisogna cercare di velocizzare il lavoro creando problemi nel codice perchè comunque questi creeranno rallentamenti successivamente.
+
+\subsection{Gestione delle crisi}
+Scegli delle linee guida che rispetteresti in un momento di crisi e rispettale sempre, non solo quando ci sono problemi.
+
+\section{Gestire la pressione}
+\begin{enumerate}
+	\item Non panicare: panicare non risolve niente
+	\item Affidati alla tua disciplina
+	\item chiedi aiuto se non riesci a risolvere qualcosa
+\end{enumerate}
+
+\chapter{Collaborazione}
+Una cosa che dobbiamo sempre ricordarci è che lavorare con altre persone non è un qualcosa che deve darci problemi, le convenzioni sociali e aziendali esistono e nessuno può pensare di essere superiore ad esse. Comprenderle, accettarle e comprendere il proprio spazio di manovra è ciò che può aiutarci a non rendere un ambiente di lavoro ancora più confuso e, certe volte, stressante di quanto non sia già.
+
+Bisogna imparare a lavorare in gruppo anche e non pensare che il proprio codice non possa mai essere modificato. I programmi evolvono, i requisiti anche.
+
+\chapter{Gruppi e progetti}
+Non pensare che un programmatore possa occuparsi di due progetti differenti contemporaneamente e che questi siano "magicamente seguiti in maniera perfetta". Non esiste dedicare tot tempo a uno e tot all'altro.
+
+I team devono essere creati e bisogna lasciare del tempo affinchè essi si mischino, cementino e crescano.
+
+\chapter{Insegnamento, apprendimento e arte}
+Nessuno nasce imparato e chi fa "gatekeeping" della professione è presto destinato a lavorare da solo. Coloro i quali hanno più esperienza dovrebbero assumere un ruolo di aiuto, insegnamento verso chi viene dopo e chi invece è nel proprio viaggio di apprendimento (anche appena iniziato) deve accettare che è normale non sapere e che la migliore disposizione sia quella del volere apprendere.
 
 \end{document}
