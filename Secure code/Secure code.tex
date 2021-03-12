@@ -1,0 +1,241 @@
+\documentclass[11pt,a4paper]{book}
+
+\usepackage{Appunti}
+
+\begin{document}
+\title{Secure code}
+\author{Jacopo De Angelis}
+\maketitle
+
+\pagebreak
+\tableofcontents
+\pagebreak
+
+\chapter{Concetti di sicurezza}
+\section{Privilegi minimi}\label{sec: privilegi minimi}
+Nel caso i permessi non siano dati correttamente, un utente malintenzionato potrebbe decidere di accedere ai dati in maniera distruttiva, ad esempio tramite una SQL injection.
+
+In questo caso una soluzione è cambiare i permessi per i vari gruppi in modo che abbiano il potere minimo per le loro funzioni. Ad esempio, nel caso di un database di un sito dove le query non sono sanificate (ovvero è possibile eseguire codice di accesso al DB all'interno delle query), si può decidere che gli utenti abbiano solo possibilità di lettura e non di scrittura.
+
+Nel caso l'utente malintenzionato acceda tramite un ruolo da amministratore potrebbe decidere di cambiare password dei database, cambiare dati o interrompere il servizio. In più qualsiasi codice eseguito da un utente con certi privilegi verrebbe eseguito con gli stessi, causando altri tipi di malfunzionamento
+
+\textbf{Il concetto dei privilegi minimi non corregge le vulnerabilità del sistema, come le code injection, ma rende più difficile per un utente malintenzionato sfruttare queste falle}
+
+\textbf{In generale i processi avviati dall'applicazione dovrebbero essere eseguiti con i privilegi minimi necessari}
+
+\section{Difesa in profondità}\label{sec: difesa in profondità}
+Il concetto dietro alla difesa in profondità è quello di creare più livelli di sicurezza, di diverso tipo, tramite diversi sistemi. Ad esempio:
+\begin{itemize}
+	\item Dividere i server in più network in modo che l'attacco non possa propagarsi
+	\item inserire un firewall
+	\item criptare i dati del database
+	\item sanificare le query e parametrizzarle
+	\item usare validazione sia a livello di frontend che di backend
+	\item mettere in sicurezza i dati nel mondo fisico, ad esempio tramite guardie ai server, accesso solo tramite badge, ecc.
+\end{itemize}
+
+\textbf{Implementare sempre più livelli di sicurezza, di più tipi, fisici, architetturali e di codice}
+
+\textbf{Livello dati}: controllo degli accessi, criptazione, backup
+
+\textbf{Livello applicazione}: autenticazione, autorizzazione, auditing (noti assieme come AAA), codice sicuro e "hardening"
+
+\textbf{Livello host}: "hardening", autenticazione, gestione degli aggiornamenti, antivirus
+
+\textbf{Livello di network interno}: Segmentazione del network, IPsec, TLS, NAT
+
+\textbf{Livello perimetrale}: firewall, TLS, negazione dell'accesso, prevenzione
+
+\textbf{Sicurezza fisica}: guardie, lucchetti, dispositivi di tracciamento, badge
+\section{Sicuro per default}\label{sec: sicuro per default}
+Il concetto dietro ad un software sicuro per default è che le impostazioni di sicurezza siano correttamente impostate.
+
+Per fare un esempio, la richiesta affinchè la password inserita sia sicura (lunghezza minima, caratteri speciali, ecc.) è una buona misura di sicurezza che dovrebbe essere implementata di base. In questo modo gli utenti sarebbero già più al sicuro da attacchi di brute force.
+
+Un altro esempio è quella di una code injection in campi non classici, ad esempio tramite l'inserimento password. Per questo caso si potrebbe implementare una sanificazione delle query al sistema, parametrizzando le richieste e impedendo che queste abbiano effetti indesiderati. In più, basandoci sul concetto dei privilegi minimi (\ref{sec: privilegi minimi}) le query potrebbero essere eseguite con i privilegi minimi.
+
+\textbf{Uno sviluppatore dovrebbe pensare alla sicurezza dall'inizio e durante tutto lo sviluppo}
+
+\textbf{Applicare il concetto della difesa in profondità (\ref{sec: difesa in profondità}), ovvero implementare più livelli di sicurezza}
+
+\textbf{Implementare la sicurezza a livello di applicazione e di infrastruttura}
+
+\textbf{Disabilitare funzionalità o servizi non usati}
+
+\section{Controllo di errori robusto}
+Mai dare troppe informazioni all'utente riguardanti un errore. Ad esempio, mai permettere che una pagina, come errore, restituisca uno stack dell'errore o altre informazioni che potrebbe usare.
+
+Parte essenziale di questo controllo è la gestione delle eccezioni. Ad esempio se una pagina di log in lanciasse un'eccezione causata da un input non previsto potrebbe semplicemente restituire un messaggio generico di errore. 
+
+\textbf{Usare messaggi di errore generici e controllare la chiusura dell'applicazione}
+
+\textbf{Non condividere informaizoni private dell'applicazione}
+
+\textbf{Scrivere su di un log gli errori in modo da poterli usare per le correzioni}
+
+\section{Non fidarsi di alcun input \textit{(trust no input)}}
+Le applicazioni non dovrebbero mai accettare un input non validato dal sistema. Ad esempio un errore che deriva da un precedente errore e che fa crollare l'app.
+
+Ricevere --> validare --> calcolare --> gestire le eccezioni
+
+\textbf{Mai fidarsi dell'utente}
+
+\textbf{Limitare le opzioni possibili per l'utente, ad esempio offrendo un menù a tendina per la selezione}
+
+\textbf{Validare ogni input, inclusi gli input che arrivano da file e DB}
+
+\textbf{Rifiutare i dati invalidi o almeno depurarli o ignorarli}
+
+\textbf{Esempi di validazione}:
+\begin{itemize}
+	\item corrispondenza
+	\item whitelist
+	\item blacklist
+\end{itemize}
+
+
+\section{Open design}
+Quando ci si basa sul design dell'applicazione come misura di sicurezza si è in errore. Si dice anche "sicurezza per oscuramento". Ad esempio, usare una porta non comune non è una buona misura di sicurezza, si possono scansionare le porte.
+
+Anche un'autenticazione nascosta, ad esempio passando un form segreto per indicare il livello di privilegio dell'utente, potrebbe essere sfruttato.
+
+Si potrebbero usare certificati, oppure usare ruoli legati all'utente.
+
+\textbf{Come regola base si dovrebbe implementare tutta la sicurezza}
+
+\textbf{Non basarsi solo sulla sicurezza per oscuramento}
+
+\textbf{La sicurezza si dovrebbe basare su metodi conosciuti}
+
+
+\section{Fallire in sicurezza}
+Le eccezioni dovrebbero essere tutte gestite in sicurezza.
+
+\textbf{Ogni blocco dovrebbe avere tre risultati determinati}:
+\begin{itemize}
+	\item SE l'utente è autorizzato ALLORA esegui l'azione
+	\item SE l'utente non è autorizzato ALLORA non eseguire l'azione
+	\item SE c'è un'eccezione ALLORA torna a prima dell'azione e manda un messaggio di errore
+\end{itemize}
+
+\section{Riutilizzo dei sistemi di sicurezza}
+Invece di creare nuovo codice (e quindi nuove falle) sarebbe meglio riutilizzare, dove possibile, codice già in uso e già testato.
+
+Se, ad esempio, un modulo viene utilizzato in più punti e poi viene scoperta una falla, basterà correggere il modulo per applicare la modifica a tutti i blocchi di codice. Avessimo creato del codice duplicato ci sarebbero stati problemi.
+
+\textbf{Come regola, tenere la semplicità in mente quando si crea un sistema}
+
+\textbf{Sempre meglio riutilizare codice già esistente e testato}
+
+\textbf{Educare il gruppo alle buone pratiche di programmazione}
+
+\section{Logging}
+Mai loggare informazioni confidenziali o personali. Sbagliato anche NON loggare mai. É sbagliato anche non loggare informazioni utili dal punto di vista della sicurezza.
+
+I log possono essere usati per permettere la risposta ad un eventuale attacco di brute forcing, ad esempio.
+
+\textbf{Mai centralizare i log. Assicurarsi che i log siano semplici da vedere e gestire}
+
+\textbf{Bisognerebbe loggare a tutti i livelli. Eventi come tentativi di login, modifiche o richieste di dati dovrebbero essere loggate}
+
+\textbf{Seguire le 5 W del logging}:
+\begin{enumerate}
+	\item Cos'è successo
+	\item Chi era coinvolto
+	\item Quando
+	\item Dove, inteso come informazioni sul luogo fisico di attacco
+	\item Da dove arriva il problema
+\end{enumerate}
+
+\textbf{Non loggare informazioni private}
+
+\textbf{Limitare l'accesso ai log in base all'utente}
+
+\section{Protezione dei dati}
+Il codice e le informazioni importanti andrebbero protette in più modi, ad esempio:
+\begin{itemize}
+	\item comunicazioni protette tramite tls
+	\item niente cache dei dati privati, come ad esempio alle carte di credito
+	\item la repo è su di un server criptato al sicuro
+	\item accesso solo interno
+	\item accesso limitato agli utenti necessari
+	\item codice offuscato
+\end{itemize}
+
+Anche proteggere la privacy è essenziale. I dati possono essere protetti tramite accesso limitato ai dati, contratti di non diffusione, ecc.
+
+\chapter{Sicurezza web app 101}
+\section{HTTP header insufficienti}
+Questa categoria è quando un header è impostato in maniera poco sicura perchè mancano alcune chiavi per mitigare certi tipi di attacco o direttamente certe voci.
+
+Ad esempio, se mancasse l'opzione X-frame si ptorebbe creare un click jacking, ovvero, poter reindirizzare i click tramite layer nascosti. Sarebbe peggio se non venissero validati degli script inseriti tramite phishing.
+
+Oppure se si utilizzano vecchie versioni di certi strumenti, lasciando aperte certe falle. COse come accedere agli stream come man in the middle o cross-site scripting sono possibili proprio per queste mancanze.
+
+Si possono prevenire certi problemi stando attenti ad esempio:
+\begin{itemize}
+	\item che si utilizzino le ultime implementazioni sicure
+	\item prestare attenzione ad alcuni header, tipo:
+	\begin{itemize}
+		\item X-XSS-Protection: abilità i filtri XSS
+		\item X-Content-Tyoe-Options: previene che si possa effettuare \href{https://www.keycdn.com/support/what-is-mime-sniffing}{MIME sniffing} alla reponse di un altro contenuto
+		\item Content-Security-Policy: copre svariate falle
+		\item X-Permitted-Cross-Domain-Polices: limita l'accesso ai dati da parte di Flash Player
+		\item Content-Type: limita i formati che possono interagire con la risorsa
+		\item X-Frame-Options: disabilità il caricamento di una risorsa in un iframe fuori dal suo dominio
+		\item Rimuovere tutti i X-Powered-By headers
+	\end{itemize}
+\end{itemize}
+
+
+\chapter{\href{https://owasp.org/www-community/attacks/}{OWASP}}
+\section{Binary planting}
+è un nome generale per un attacco nel quale un hacker piazza un file contenente del codice maligno in un sistema remoto o locale in modo da sfruttare una vulnerabilità e caricarlo. Questo attacco può accadere in vari modi:
+\begin{itemize}
+	\item Permessi d'accesso insicuri ad una cartella locale per permettere ad un attaccante di inserire del codice maligno in punti autorizzati
+	\item Un'applicazione potrebbe avere accesso a zone per inserire il codice maligno\footnote{Chissà perchè IE è visto così male, vero?}
+%	\item L'applicazione cerca ilcodice binario in posizioni non sicure, ad esempio in un sistema remoto, ad esempio un'applicazione windows che carica un DLL\footnote{Dynamic Link Library} dalla cartella corrente dopo che è stata resa una cartella condivisa
+\end{itemize}
+\section{Injection flaws}
+\subsection{SQL injection cieca}
+É un un tipo di attacco nel quale vengono fatte domande al server di tipo vero o falso e si determina la risposta in base alla risposta del server. Questo attacco viene usato spesso per le applicazioni web che mostrano errori generici ma non sono mitifate per le vulnerabilità SQL.
+
+Viene usato quando il server non mostra dati con una richiesta classica e allora bisogna trovare un modo per arginare il problema.
+\subsection{SQL injection}
+\subsection{XPath injection cieca}
+Xpath è un tipo di linguaggio di query, quindi è simile a SQL come idea. La cosa che cambia è che vada a cercare all'interno di un qualsiasi file XML senza restrizioni in quanto la nozione di Utente non esiste. L'attacco è quindi simile alla SQL injection cieca, semplicemente non ci sono restrizioni in corso.
+\section{Brute force}
+Questo attacco si può manifestare in molti modi ma primariamente consiste nel configurare dei valori prestabiliti e continuare a fare richieste al server con quei valori per poi analizzare le risposte. Si potrebbe usare un attacco basato su di un dizionario.
+\section{Buffer overflow tramite variabili d'ambiente}
+Una volta che l'hacker comprendere come modificare le variabili d'ambiente, potrebbe provare a creare un overflow sul buffer collegato. Per questo attacco ci sono dei requisiti:
+\begin{itemize}
+	\item l'applicazione deve usare variabili d'ambiente
+	\item le variabili d'ambiente sono esposte all'utente e sono vulnerabili per un buffer overflow
+	\item l'ambiente vulnerabile usa dati non sicuri
+	\item i dati non sono propriamente validati
+\end{itemize}
+
+\section{Buffer overflow}
+COnsiste nel modificare il buffer dei dati riscrivendo certi segmenti di memoria o dei processi, generando errori a catena.
+
+\section{CORS\footnote{Cross-Origin Resource Sharing} OriginHeaderScrutiny}
+É una feature che permette di:
+\begin{itemize}
+	\item Per un'applicazione web di esporre risorse a tutti o ad un dominio ristretto
+	\item Ad un web client di eseguire richieste AJAX per risorse di altri domini
+\end{itemize}
+
+Il rischio qua è che venga inserito un qualsiasi valore all'interno dell'header HTTP Origin per forzare un'applicazione web ad offrire il contenuto richiesto. 
+
+\section{CORS RequestPreflighScrutiny}
+
+
+\section{Password enumeration}
+É un attacco nel quale l'hacker prova a comprendere se un utente è all'interno del sistema o no.
+
+\section{Session handling}
+\section{Autenticazione}
+\section{Business logic}
+
+\section{•}
+\end{document}
