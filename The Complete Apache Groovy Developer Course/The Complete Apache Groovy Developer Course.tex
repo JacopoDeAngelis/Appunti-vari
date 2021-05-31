@@ -1,0 +1,283 @@
+\documentclass[11pt,a4paper]{book}
+
+\usepackage{Appunti}
+
+\definecolor{groovyblue}{HTML}{0000A0}
+\definecolor{groovygreen}{HTML}{008000}
+\definecolor{darkgray}{rgb}{.4,.4,.4}
+ 
+\lstdefinelanguage{Groovy}[]{Java}{
+  keywordstyle=\color{groovyblue}\bfseries,
+  stringstyle=\color{groovygreen}\ttfamily,
+  keywords=[3]{each, findAll, groupBy, collect, inject, eachWithIndex},
+  morekeywords={def, as, in, use},
+  moredelim=[is][\textcolor{darkgray}]{\%\%}{\%\%},
+  moredelim=[il][\textcolor{darkgray}]{§§}
+}
+
+\begin{document}
+\title{The Complete Apache Groovy Developer Course}
+\author{Jacopo De Angelis}
+\maketitle
+
+\pagebreak
+\tableofcontents
+\pagebreak
+
+\chapter{Introduzione}
+\section{groovysh}
+Groovysh è un'applicazione da linea di comando fornita tramite l'SDK. Per accedervi basta scrivere nel prompt "groovysh" e si attiverà la shell.
+
+Essendo un linguaggio di scripting è possibile scrivere semplici comandi da fare valutare (e.g. 1+1, println "Hello, World!").
+
+\begin{lstlisting}[language = groovy]
+groovy:000> 1+1
+===> 2
+
+groovy:000> println "Hello"
+Hello
+===> null
+\end{lstlisting}
+
+Groovy riconosce anche quando una linea di comando non è terminata, attendendo la valutazione e segnalandolo tramite il numero a inizio linea.
+\begin{lstlisting}[language = groovy]
+groovy:000> class Person {
+groovy:001> def sayHello(){
+groovy:002> println "Hello"
+groovy:003> }
+groovy:004> }
+===> true
+
+groovy:000> person = new Person()
+===> Person@2dbfcf7
+
+groovy:000> person.sayHello()
+Hello
+===> null
+\end{lstlisting}
+
+\section{groovyc}
+É il corrispettivo di javac, lo script viene tradotto in Java bytecode.
+\begin{lstlisting}[language = groovy]
+groovyc -help                                                                                  
+Usage: groovyc [options] <source-files>
+      [<source-files>...]    The groovy source files to compile, or @-files
+                               containing a list of source files to compile
+      -cp, -classpath, --classpath=<path>
+                             Specify where to find the class files - must be
+                               first argument
+      -sourcepath, --sourcepath=<path>
+                             Specify where to find the source files
+      --temp=<temp>          Specify temporary directory
+      --encoding=<encoding>  Specify the encoding of the user class files
+  -d=<dir>                   Specify where to place generated class files
+  -e, --exception            Print stack trace on error
+      -pa, --parameters      Generate metadata for reflection on method
+                               parameter names (jdk8+ only)
+      -pr, --enable-preview  Enable preview Java features (JEP 12) (jdk12+
+                               only) - must be after classpath but before other
+                               arguments
+  -j, --jointCompilation     Attach javac compiler to compile .java files
+  -b, --basescript=<class>   Base class name for scripts (must derive from
+                               Script)
+  -J=<property=value>        Name-value pairs to pass to javac
+  -F=<flag>                  Passed to javac for joint compilation
+      --indy                 Enables compilation using invokedynamic
+      --configscript=<script>
+                             A script for tweaking the configuration options
+  -h, --help                 Show this help message and exit
+  -v, --version              Print version information and exit
+      --compile-static       Use CompileStatic
+      --type-checked         Use TypeChecked
+\end{lstlisting}
+
+I file possono essere successivamente eseguiti tramite "groovy [file.class]".
+
+\section{groovyConsole}
+Digitare nel prompt "groovyConsole" apre la console, ovvero un ambiente di sviluppo base dove scrivere e testare i nostri script.
+\begin{figure}[h!]
+	\begin{center}
+		\includegraphics[scale=0.6]{img/001.png}
+		\caption{Groovy console}
+		\label{fig: 001}
+	\end{center}
+\end{figure}
+
+\section{Alcune note per passare da Java a Groovy}
+\begin{itemize}
+	\item return non serve in quanto verrà automaticamente restituito l'ultimo output del metodo
+	\item public non serve per gli oggetti
+	\item ; non servono a meno di seperare due comandi sulla stessa linea
+	\item le proprietà di un oggetto sono private di default
+	\item getter e setter non servono
+	\item println non necessita dei System.out. prima, è un metodo di default, le parentesi sono superflue
+	\item @groovy.transform.toString() usato come annotazione sulla classe crea automaticamente la redifinizione del metodo
+	\item i costruttori sono superflui in quanto posso costruire manualmente l'istanza (e.g. "new User(firstName:"nome", lastname:"cognome")"
+\end{itemize}
+
+\chapter{Le basi}
+\section{Import di default}
+\begin{lstlisting}[language = groovy]
+import java.lang.*
+import java.util.*
+import java.io.*
+import java.net.*
+import groovy.lang.*
+import groovy.util.*
+import java.math.BigInteger
+import java.math.BigDecimal
+\end{lstlisting}
+Questi import automatici riducono il boilerplate. Nel caso siano richiesti altri import è uguale a Java.
+
+\section{Assertions}
+$assert$ funziona per valutare se l'espressione successiva sia vera.
+
+\section{Numeri}
+Groovy fa un boxing automatico dei numeri nelle loro versioni oggetto (e.g. int -> Integer) 
+
+\section{Control structure}
+swtich, if e while funzionano allo stesso modo di Java eccetto che per le stringhe true vale solo se la stringa contiene un valore, la stringa vuota è false.
+
+\subsection{for}
+I for possono avere la forma iterativa
+\begin{lstlisting}[language = groovy]
+for(x in collection){
+	...
+}
+\end{lstlisting}
+
+oppure la funzione .each.
+
+\section{Annotazioni e \href{http://docs.groovy-lang.org/next/html/gapi/groovy/transform/package-summary.html}{AST transformation}}
+
+Prima di tutto bisogna importare il package groovy.transform.*.
+
+Le annotazioni funzionano tramite "@codiceDell'implementazione", ad esempio:
+\begin{lstlisting}[language = groovy]
+import groovy.transform.Immutable
+
+@Immutable
+class Customer {
+	String first, last
+	int age
+	Date since
+	Collection favItems
+}
+\end{lstlisting}
+
+In questo caso la classe sarà in sola lettura.
+
+\section{\href{https://groovy-lang.org/operators.html}{Operatori}}
+\begin{lstlisting}[language = groovy]
+assert  1  + 2 == 3
+assert  4  - 3 == 1
+assert  3  * 5 == 15
+assert  3  / 2 == 1.5
+assert 10  % 3 == 1
+assert  2 ** 3 == 8
+assert 2++ == 3
+assert 3-- == 2
+\end{lstlisting}
+
+Abbiamo anche gli operatori di assegnamento
+\begin{lstlisting}[language = groovy]
+def a = 4
+a += 3
+
+assert a == 7
+
+def b = 5
+b -= 3
+
+assert b == 2
+
+def c = 5
+c *= 3
+
+assert c == 15
+
+def d = 10
+d /= 2
+
+assert d == 5
+
+def e = 10
+e %= 3
+
+assert e == 1
+
+def f = 3
+f **= 2
+
+assert f == 9
+\end{lstlisting}
+
+In groovy sono stati aggiunti === e !== che implicano identità, quindi non uguali in contenuto ma uguali in identità.
+\begin{lstlisting}[language = groovy]
+@EqualsAndHashCode
+class Creature { String type }
+
+def cat = new Creature(type: 'cat')
+def copyCat = cat
+def lion = new Creature(type: 'cat')
+
+assert cat.equals(lion) // Java logical equality
+assert cat == lion      // Groovy shorthand operator
+
+assert cat.is(copyCat)  // Groovy identity
+assert cat === copyCat  // operator shorthand
+assert cat !== lion     // negated operator shorthand
+\end{lstlisting}
+
+\subsection{Elvis operator}
+Novità è l'elvis operator, ovvero un'abbreviazione dell'operatore ternario
+\begin{lstlisting}[language = groovy]
+import groovy.transform.ToString
+
+displayName = user.name ? user.name : 'Anonymous'   
+displayName = user.name ?: 'Anonymous' 
+\end{lstlisting}
+Un esempio di uso
+\begin{lstlisting}[language = groovy]
+@ToString
+class Element {
+    String name
+    int atomicNumber
+}
+
+def he = new Element(name: 'Helium')
+he.with {
+    name = name ?: 'Hydrogen'   // existing Elvis operator
+    atomicNumber ?= 2           // new Elvis assignment shorthand
+}
+assert he.toString() == 'Element(Helium, 2)'
+\end{lstlisting}
+
+\subsection{Safe navigation}
+Altro operatore utile è quello di safe navigation, il quale accede al campo se e solo se questo non è null.
+\begin{lstlisting}[language = groovy]
+def person = Person.find { it.id == 123 }    
+def name = person?.name                      
+assert name == null  
+\end{lstlisting}
+
+\section{\href{http://docs.groovy-lang.org/latest/html/documentation/grape.html}{Grave}}
+É un tool di dependecy management, può essere usato in forma estesa o in forma contratta:
+\begin{lstlisting}[language = groovy]
+@Grab(group='org.springframework', module='spring-orm', version='3.2.5.RELEASE')
+import org.springframework.jdbc.core.JdbcTemplate
+
+@Grab('org.springframework:spring-orm:3.2.5.RELEASE')
+import org.springframework.jdbc.core.JdbcTemplate
+\end{lstlisting}
+
+In questo modo non ci serve avere il jar per passare un file, verrà automaticamente risolto.
+\chapter{Materiali utili}
+\href{https://groovy-lang.org/}{Documentazione}
+
+\href{https://www.manning.com/books/groovy-in-action-second-edition}{Groovy in action}
+
+\href{https://www.manning.com/books/making-java-groovy}{Making Java Groovy}
+
+\href{https://pragprog.com/titles/vslg2/programming-groovy-2/}{Programming Groovy 2}
+\end{document}
