@@ -272,6 +272,90 @@ import org.springframework.jdbc.core.JdbcTemplate
 \end{lstlisting}
 
 In questo modo non ci serve avere il jar per passare un file, verrà automaticamente risolto.
+
+\chapter{Tipi}
+var : Java = def : groovy
+
+Solo che def è totalmente dinamico, non dobbiamo tenere lo stesos tipo di variabile, "def" implica che può contenere una qualsiasi cosa, quindi potremmo dire
+\begin{lstlisting}[language = groovy]
+def x = 10
+x = "stringa"
+\end{lstlisting}
+
+\section{times, upto, downto, step}
+times è un metodo di Integer che permette di eseguire una funzione n volte
+\begin{lstlisting}[language = groovy]
+20.times {
+	...
+}
+\end{lstlisting}
+
+upto funziona da x a y
+\begin{lstlisting}[language = groovy]
+1.upto(10) {
+	...
+}
+\end{lstlisting}
+
+downto è l'esatto contrario
+\begin{lstlisting}[language = groovy]
+10.downto(1) {
+	...
+}
+\end{lstlisting}
+
+step è come upto ma permette di stabilire l'incremento, ad esempio qua farà 0, 0.1, 0.2,...1
+\begin{lstlisting}[language = groovy]
+0.step(1, 0.1) {
+	...
+}
+\end{lstlisting}
+
+\section{Redifinizione degli operatori}
+Una cosa utile è ridefinire le operazioni base in modo da potere prescrivere comportamenti specifici per nuove classi. Ad esempio, se volessimo ridefinire il + potremmo scrivere
+\begin{lstlisting}[language = groovy]
+[oggetto] plus([altro oggetto]){
+	...
+}
+\end{lstlisting}
+
+\href{https://groovy-lang.org/operators.html#Operator-Overloading}{Qua} possiamo vedere la lista delle operazioni.
+
+\section{Stringhe}
+Cosa da ricordare, se vogliamo creare una stringa multilinea bisogna rispettare un passo ulteriore, ovvero l'utilizzo del triplo apice/doppio apice:
+\begin{lstlisting}[language = groovy]
+def aLongMessage = '''
+Questo
+è
+un
+messaggio
+multilinea
+'''
+\end{lstlisting}
+
+\subsection{\$}
+Le stringhe possono contenere caratteri speciali, ad esempio \, in quel caso si possono "escapare" singolarmente o in blocco, ad esempio:
+\begin{lstlisting}[language = groovy]
+"c:\\cartella\\interna"
+
+// oppure
+
+$c:\cartella\interna$
+\end{lstlisting}
+
+\section{Regex}
+Funzionano come in java ma vengono dichiarate diversamente, ovvero tramite l'operatore ~.
+\begin{lstlisting}[language = groovy]
+def pattern = ~[regex]
+
+def finder = text ~= pattern
+def matcher = text ~== pattern
+\end{lstlisting}
+La differenza tra find (~=) e match (~==) è che find restituisce una lista di ritrovamenti, match restituisce un boolean che rappresenta se la stringa è generata dalla regex o no.
+
+Un uso particolare è quello
+
+String.replaceFirst(regex, newString) che permette di sostituire la prima istanza che viene trovata dalla regex con newString.
 \chapter{Materiali utili}
 \href{https://groovy-lang.org/}{Documentazione}
 
