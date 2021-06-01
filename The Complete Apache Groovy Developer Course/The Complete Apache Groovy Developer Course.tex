@@ -356,6 +356,30 @@ La differenza tra find (~=) e match (~==) è che find restituisce una lista di r
 Un uso particolare è quello
 
 String.replaceFirst(regex, newString) che permette di sostituire la prima istanza che viene trovata dalla regex con newString.
+
+\chapter{Collections}
+\section{\href{http://docs.groovy-lang.org/latest/html/gapi/groovy/lang/Range.html}{Range}}
+I range vengono creati con un operatore particolare, ..
+\begin{lstlisting}[language = groovy]
+def range = 1..10
+def halfRange = 1..<10
+\end{lstlisting}
+Questo va a definire una lista che va da 1 a 10 e una lista da 1 a 9.
+
+Può essere usato con vari oggetti, ad esempio char e Date.
+
+\section{\href{http://docs.groovy-lang.org/latest/html/groovy-jdk/java/util/List.html}{List} e \href{http://docs.groovy-lang.org/latest/html/groovy-jdk/java/util/Map.html}{Maps}}
+Le liste funzionano in parte come array in parte come le liste in Java.
+
+Le mappe sono come in Java ma le chiavi possono essere definite in modi differenti:
+\begin{lstlisting}[language = groovy]
+def varKey = key3
+def map = [key1:val1, 'key2':val2, (varKey):val3]
+\end{lstlisting}
+key1 è convertita automaticamente in stringa, (varKey) segnala di prendere il valore della variabile.
+
+É più conveniente leggere la documentazione.
+
 \chapter{Materiali utili}
 \href{https://groovy-lang.org/}{Documentazione}
 
