@@ -380,6 +380,131 @@ key1 è convertita automaticamente in stringa, (varKey) segnala di prendere il v
 
 É più conveniente leggere la documentazione.
 
+\chapter{\href{https://groovy-lang.org/closures.html}{Closures}}
+è un metodo definito come un oggetto da potere passare.
+
+Lo definiamo in maniera simile ad una variabile.
+\begin{lstlisting}[language = groovy]
+def sayHello = { name ->
+	println "Hello, $name!"
+}
+
+sayHello("Nome")
+\end{lstlisting}
+
+A questo punto possiamo usarlo come funzione anonima. Se vogliamo passare più di una variabile possiamo farlo. Nel seguente esempio viene passata una closure e viene usata assieme all'altra variabile num.
+\begin{lstlisting}[language = groovy]
+def timesTen(num, closure){
+	closure(num * 10)
+	
+timesTen(10, { println it })
+\end{lstlisting}
+
+Notare che con it diciamo di prendere automaticamente il valore passato.
+
+C'è anche un modo particolare per usare le closure, ovvero nel caso vengano passate come ultimo argomento, in quel caso possono essere chiamate così:
+\begin{lstlisting}[language = groovy]
+timesTen(10) {
+	println it
+}
+\end{lstlisting}
+
+Se vogliamo assicurarci che nessuna variabile possa essere passata possiamo usare l'operatore freccia vuoto
+\begin{lstlisting}[language = groovy]
+def noVar = { ->
+     println "No var"
+}
+\end{lstlisting}
+
+Se vogliamo avere un valore di default possiamo farlo. Attenzione che tutti i valori con un default devono essere messi in fondo alla lista dei valori passabili e che non possiamo decidere di usare il default del secondo e non del primo. 
+\begin{lstlisting}[language = groovy]
+def great = {String name, String greeting = "howdy" ->
+	println "$greeting, $name"
+}
+
+great("nome")
+great("Nome, "Saluto")
+
+// Esempio di chiamata invalida
+def closure = {String first, String second = "second", String third = "third" ->
+	println "$first, $second, $third)
+}
+
+closure("first",,"Third") // invalida
+\end{lstlisting}
+
+Possiamo usare "var" nella definizione di un metodo. Possiamo anche dire che riceveremo una lista tramite ..
+\begin{lstlisting}[language = groovy]
+def concat(String.. args ->
+	args.join('')
+}
+\end{lstlisting}
+
+Ci sono alcune proprietà speciali di tutte le closure, ad esmepio Closure.maximumNumberOfParameters.
+
+\section{curry}
+Closure.curry ci permette di estendere una closure già esistente in modo da riempire precedentemente certi argomenti.
+\begin{lstlisting}[language = groovy]
+def log = { String type, Date createdOn, String msg ->
+	println "$createdOn ($type) - $msg
+}
+
+log("Debug", new Date(), "This is my first statement")
+
+def debugLog = log.curry("DEBUG")
+debugLog(new Date(), "This is my second statement")
+
+def todayLog = log.curry("DEBUG", new Date())
+todayLog("This is my third statement")
+\end{lstlisting}
+
+Ci sono anche dei curry speciali, uno per partire da destra (rcurry) e uno per decidere a che indice degli argomenti riempire (ncurry(idx, arg)).
+
+\section{Closure scope e delegate}
+All'interno di una closure abbiamo tre scope:
+\begin{itemize}
+	\item this: corrisponde alla classe dove è definita la closure
+	\item owner: corrisponde all'oggetto dove la classe è definita, la quale potrebbe essere un'altra classe o un'altra closure
+	\item delegate: corrisponde ad un oggetto di terze parti dove le chiamate o le proprietà sono risolte nel caso il ricevente del messaggio non sia definito
+\end{itemize}
+
+Per capire meglio a cosa ci si riferisca serve una demo:
+\begin{lstlisting}[language = groovy]
+class ScopeDemo {
+
+    def outerClosure = {
+        println this.class.name // ScopeDemo
+        println owner.class.name // ScopeDemo
+        println delegate.class.name // ScopeDemo
+        
+        def nestedClosure = {
+            println this.class.name // ScopeDemo
+            println owner.class.name // ScopeDemo$_closure1
+            println delegate.class.name // ScopeDemo$_closure1
+        }
+        
+        nestedClosure()
+    }
+   
+}
+
+def demo = new ScopeDemo()
+demo.outerClosure()
+\end{lstlisting}
+
+La maggiore parte delle volte owner e delegate sono uguali. Possiamo però usare il delegate in maniere partricolari, ovvero dichiarandolo:
+\begin{lstlisting}[language = groovy]
+def writer = {
+    append "Nome"
+    append " vive a Milano"
+}
+
+StringBuffer sb = new StringBuffer()
+writer.delegate = sb
+writer()
+\end{lstlisting}
+
+Facendo così writer non troverà metodi append definiti al suo interno, allora inizierà a cercare nell'owner e nel caso non ne trovasse allora cercherà nel delegate. Usando così delegate possiamo dire con che classe risolvere le chiamate.
 \chapter{Materiali utili}
 \href{https://groovy-lang.org/}{Documentazione}
 
