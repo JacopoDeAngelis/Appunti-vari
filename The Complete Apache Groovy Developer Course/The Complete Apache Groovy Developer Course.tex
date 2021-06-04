@@ -505,6 +505,54 @@ writer()
 \end{lstlisting}
 
 Facendo così writer non troverà metodi append definiti al suo interno, allora inizierà a cercare nell'owner e nel caso non ne trovasse allora cercherà nel delegate. Usando così delegate possiamo dire con che classe risolvere le chiamate.
+
+\chapter{Control structure}
+Le uniche due tra le condizionali che meritano di essere citate sono lo switch e in:
+\begin{lstlisting}[language = groovy]
+switch(num) {
+    case 0 :
+    case 1 :
+        println num
+        break
+    case 1..3 :
+        println "in range 1..3"
+        break
+    case [1, 2, 12]
+        println num
+        break
+    case Integer:
+        println "num is an Integer"
+        break
+    case Float:
+        println "num is a float"
+        break
+    default:
+        println "default.."
+}       
+
+def range = 18..35
+def list = [1, 2, 3]
+
+println 21 in range // true
+println 4 in list // false
+\end{lstlisting}
+
+Come si può vedere si possono usare casi molto più particolari.
+
+\section{Error Handling}
+La differenza con Java è che l'eccezione nella firma del metodo è opzionale, nel caso non venga gestita all'interno del metodo allora sarà passato al chiamante.
+
+\begin{lstlisting}[language = groovy]
+// Java
+public void foo() throws Exception {
+	...
+}
+
+// Groovy
+def foo() {
+	...
+}
+\end{lstlisting}
 \chapter{Materiali utili}
 \href{https://groovy-lang.org/}{Documentazione}
 
