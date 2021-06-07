@@ -553,6 +553,67 @@ def foo() {
 	...
 }
 \end{lstlisting}
+
+\chapter{OOP}
+\section{Traits}
+I tratti sono dei pezzi di codici già implementati che possono essere inseriti direttamente nelle classi. Vengono aggiunti tramite implements, come se fossero interfacce; la differenza con queste è che possono mantenere uno stato.
+\begin{lstlisting}[language = groovy]
+trait FlyingAbility {
+	private final String FLY_STRING = "I'm flying"	
+	
+	String fly() {
+		FLY_STRING
+	}
+}
+
+trait SpeakingAbility {
+	String speak() {
+		"I'm speaking"
+	}
+}
+\end{lstlisting}
+\begin{lstlisting}[language = groovy]
+class Bird implements FlyingAbility, SpeakingAbility {
+	...
+}
+
+Bird birbo = new Bird()
+assert birbo.fly == "I'm flying"
+assert birbo.speak == "I'm speaking"
+\end{lstlisting}
+
+\section{Serializable}
+Mentre con Java le classi da serializzare sono estremamente verbose, in Groovy sono estremamente semplici grazie a ciò che viene creat OOTB da groovy. Le classi devono:
+\begin{itemize}
+	\item avere solo campi privati
+	\item avere un costruttore senza argomenti
+	\item avere getter e setter
+\end{itemize}
+
+Mentre in Java dovremmo fare tutto ciò in Groovy molto è fatto direttamente dal compilatore, quindi:
+\begin{lstlisting}[language = java]
+// Esempio Java
+
+public class Person implements Serializable{
+	private String firstName;
+	private String lastName;
+	private String email;
+	
+	public Person() {
+	}
+	
+	// getter e setter, 6 metodi
+}
+\end{lstlisting}
+\begin{lstlisting}[language = groovy]
+// Esempio Groovy
+
+class Person implements Serializable{
+	String firstName, lastName, email
+}
+\end{lstlisting}
+e fine.
+
 \chapter{Materiali utili}
 \href{https://groovy-lang.org/}{Documentazione}
 
