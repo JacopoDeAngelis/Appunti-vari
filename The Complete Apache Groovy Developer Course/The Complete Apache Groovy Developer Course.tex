@@ -614,6 +614,181 @@ class Person implements Serializable{
 \end{lstlisting}
 e fine.
 
+\chapter{Metaprogramming}
+MOP (Meta Object Protocol) è una collezione di regole di come una richiesta per un metodo è gestita dal sistema runtime di Groovy e come controllare lo strato intermedio.
+\begin{figure}[h!]
+	\begin{center}
+		\includegraphics[scale=0.6]{img/002.jpg}
+		\caption{MOP}
+		\label{fig: 002}
+	\end{center}
+\end{figure}
+
+\begin{figure}[h!]
+	\begin{center}
+		\includegraphics[scale=0.5]{img/003.png}
+		\caption{Decisioni del MOP}
+		\label{fig: 003}
+	\end{center}
+\end{figure}
+
+Possiamo quindi personalizzare il nostro MOP con alcuni intercettori, ovvero:
+\begin{itemize}
+	\item invokeMethod
+	\item getProperty
+	\item property missing
+	\item set property
+	\item method missing
+\end{itemize}
+
+\section{invokeMethod}
+\begin{lstlisting}[language = groovy]
+class InvokeDemo {
+	
+	def invokeMethod(String name, Object args) {
+		return "called invokeMethod $name $args"
+	}
+	
+	def test() {
+		return "method exists"
+	}
+}
+
+def invokeDemo = new InvokeDemo()
+
+assert invokeDemo.test() == "method exists"
+assert invokeDemo.someMethod() == "called invokeMethod someMethod []"
+\end{lstlisting}
+
+se non avessi implementato invokeMethod il secondo assert sarebbe fallito in quanto non ci sarebbe stato alcun metodo da chiamare. In questo caso, invece, viene intercettata la chiamata ad un qualsiasi metodo e se non viene trovato quello corrispondente invokeMethod ne prende il posto, prendendo in ingresso il nome del metodo chiamato e gli argomenti passati.
+
+\section{getProperty, setProperty, propertyMissing}
+\begin{lstlisting}[language = groovy]
+class PropertyDemo {
+	def prop1 = "prop1"
+	def prop2 = "prop2"
+	def prop3 = "prop3"
+}
+
+def pd = new PropertyDemo()
+assert pd.prop1 == "prop1"
+assert pd.prop2 == "prop2"
+assert pd.prop3 == "prop3"
+\end{lstlisting}
+\begin{lstlisting}[language = groovy]
+class PropertyDemo {
+	def prop1 = "prop1"
+	def prop2 = "prop2"
+	def prop3 = "prop3"
+	
+	def getProperty(String name) {
+		println "getting property $name"
+	}
+}
+
+def pd = new PropertyDemo()
+assert pd.prop1 == "getting property prop1"
+assert pd.prop2 == "getting property prop2"
+assert pd.prop3 == "getting property prop3"
+\end{lstlisting}
+Anche in questo caso intercetta le chiamate ad ogni getter. Giustamente potremmo volere usare questo sistema per loggare qualcosa ma poi continuare con l'esecuzione, per quello possiamo usare le metaclass:
+\begin{lstlisting}[language = groovy]
+class PropertyDemo {
+	def prop1 = "prop1"
+	def prop2 = "prop2"
+	def prop3 = "prop3"
+	
+	def getProperty(String name) {
+		println "getting property $name"
+		
+		if (metaClass.hasProperty(this, name) {
+			return metaClass.getProperty(this, name)
+		} else {
+			println "no property with name $name"
+			return name
+		}
+	}
+}
+\end{lstlisting}
+getProperty e setProperty lavorano sullo stesso principio. La parte dell'else però è macchinosa, è meglio gestirla tramite la propertyMissing:
+\begin{lstlisting}[language = groovy]
+class PropertyDemo {
+	def prop1 = "prop1"
+	def prop2 = "prop2"
+	def prop3 = "prop3"
+	
+	def getProperty(String name) {
+		println "getting property $name"
+		return metaClass.getProperty(this, name)
+	}
+	
+	def propertyMissing(String name) {
+		println "no property with name $name"
+		return name
+	}
+}
+\end{lstlisting}
+
+\section{methodMissing}
+É invocato solo se non viene trovato un metodo con quel nome.
+\begin{lstlisting}[language = groovy]
+class methodMissingDevo {
+	
+	def methodMissing(String name, def args){
+		println "Method missing with name $name"
+		println "with arguments $(args)"
+		if (/* condition for specific methods */) {
+			throw MissingMethodException(name, args)
+		}
+	}
+}
+\end{lstlisting}
+
+\section{Metaclass}
+Le metaclassi permettono di aggiungere metodi alla classe senza aggiungerli a quella concreta, un po' come le transformation viste prima. Possiamo creare classi a runtime (classi di tipo Expando) o modificare quelle già esistenti, ad esempio:
+\begin{lstlisting}[language = groovy]
+Expando ex = new Expando()
+e.metaClass.name = "expando"
+e.metaClass.writeCode = { -> println $name }
+e.writeCode()
+
+class Developer {
+	// vuota
+}
+
+Developer dev = new Developer()
+dev.metaClass.name = "developer"
+dev.metaClass.writeCode = { -> println $name }
+dev.writeCode()
+\end{lstlisting}
+
+In questo modo stiamo aggiunendo alla classe delle proprietà senza essere limitati da quelle presenti all'interno della classe concreta.
+
+\section{Category class}
+Sono classi che racchiudono una serie di metodi applicabili in giro ma che non richiedono di essere istanziate. Il problema è che se certi metodi venissero usati senza una distinzione in una classe qualcuno potrebbe chiedersi da dove arrivino. Quindi usiamo le cateogy class. I metodi devono essere tutti statici e devono essere chiamati all'interno di un blocco use.
+\begin{lstlisting}[language = groovy]
+def StringCategory {
+	static String shout(String str) {
+		str.toUpperCase()
+	}
+}
+
+use(StringCategory){
+	println "Hello, world!".shout	
+}
+
+println "Hello, world!".shout() // Error
+\end{lstlisting}
+Per usare un esempio OOTB c'è la TimeCategory:
+\begin{lstlisting}[language = groovy]
+use(TimeCategory) {
+	println 1.minute.from.now
+	
+	def someDate = new Date()
+	println someDate - 3.month
+}
+\end{lstlisting}
+
 \chapter{Materiali utili}
 \href{https://groovy-lang.org/}{Documentazione}
 
