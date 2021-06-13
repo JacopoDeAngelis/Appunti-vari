@@ -8,3 +8,5 @@
 *.dvi
 *.blg
 *.bbl
+**/__pycache__/**
+**.idea/**
