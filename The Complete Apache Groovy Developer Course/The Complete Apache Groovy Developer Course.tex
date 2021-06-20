@@ -957,6 +957,161 @@ assert ['English', 'Java'] == firstSchool.courses.findAll{ it.teacher.name == 'E
 assert 'mrhaki' == firstSchool.courses[2].students.find { it.name == 'mrhaki' }.name
 assert 'Mary' == firstSchool.courses.find{ it.name == 'Java' }.students.find{ it.name == 'Mary' }.name
 \end{lstlisting}
+
+\chapter{Servizi REST}
+\section{Usare gli XML}
+Utile per servizi che non sono passati a XML, esiste l'XmlSlurper che si occupa di leggere e interpretare le informazioni di un documento XML e salvarle, ad esempio:
+\begin{lstlisting}[language = groovy]
+
+def xml = '''
+    <sports>
+        <sport>
+            <name>Football</name>
+        </sport>
+    </sports>
+'''
+
+def sports = new XmlSlurper().parseText(xml)
+
+println sports.getClass().getName()
+println sports.sport.name
+
+// il file contiene lo stesso XML scritto sopra
+def sports = new XmlSlurper().parse('[indirizzo di un file coi dati]')
+
+println sports
+println sports.sport[2].name
+\end{lstlisting}
+
+\section{Usare i Json}
+Fondamentalmente funziona allo stesso modo ma con i JSON:
+\begin{lstlisting}[language = groovy]
+import groovy.json.JsonSlurper
+
+def books = '''
+{
+    "books": {
+        "currentBook": {
+            "title": "The 4 Hour Work Week",
+            "isbn": "978-0-307-46535-1",
+            "author": {
+                "first": "Timothy",
+                "last": "Ferriss",
+                "twitter": "@tferriss"
+            },
+            "related": [
+                "The 4 Hour Body",
+                "The 4 hour chef"
+            ]
+        },
+        "nextBook": {
+            "title": "#AskGaryVee",
+            "isbn": "978-0-06-227312-3",
+            "author": {
+                "first": "Gary",
+                "last": "Vaynerchuck",
+                "twitter": "@garyvee"
+            },
+            "related": [
+                "Jab, Jab, Jab, Right Hook",
+                "Crush It!"
+            ]
+        }
+    }
+}
+'''
+
+JsonSlurper slurper = new JsonSlurper()
+def json = slurper.parseText(books)
+
+println json.books.nextBook.title
+
+json = slurper.parse(new File('[indirizzo di un file coi dati]'))
+
+println json.books.currentBook
+println json.books.currentBook.title
+println json.books.currentBook.author.twitter
+println json.books.currentBook.related
+\end{lstlisting}
+
+\section{HTTP verbs}
+\begin{itemize}
+	\item GET: The GET method requests a representation of the specified resource. Requests using GET should only retrieve data.
+	\item HEAD: The HEAD method asks for a response identical to that of a GET request, but without the response body.
+	\item POST: The POST method is used to submit an entity to the specified resource, often causing a change in state or side effects on the server.
+	\item PUT: The PUT method replaces all current representations of the target resource with the request payload.
+	\item DELETE: The DELETE method deletes the specified resource.
+	\item CONNECT: The CONNECT method establishes a tunnel to the server identified by the target resource.
+	\item OPTIONS: The OPTIONS method is used to describe the communication options for the target resource.
+	\item TRACE: The TRACE method performs a message loop-back test along the path to the target resource.
+	\item PATCH: The PATCH method is used to apply partial modifications to a resource. 
+\end{itemize}
+
+\section{HTTP status}
+Sono molti, \href{https://it.wikipedia.org/wiki/Codici_di_stato_HTTP}{qua} una lista.
+In generale:
+\begin{itemize}
+	\item 1xx: informazioni
+	\item 2xx: successo
+	\item 3xx: reindirizzamento
+	\item 4xx: errore del client
+	\item 5xx: errore del server
+\end{itemize}
+
+\section{Content negotiation}
+É un meccanismo che permette di servire differenti versione di un documento alla stessa URI in base a cosa è richiesto. Ad esempio un client potrebbe mandare un JSON e richiedere un JSON come risposta.
+
+\section{Utilizzare servizi basati su REST}
+Groovy semplifica di molto il lavoro, ad esempio si può effettuare una get anche semplicemente mettendo come metodo su di una stringa .toURL() per fare una get. La stringa nell'esempio restituisce il body della pagina.
+\begin{lstlisting}[language = groovy]
+println 'http://groovy-lang.org'.toURL().text
+\end{lstlisting}
+
+Un esempio più completo:
+\begin{lstlisting}[language = groovy]
+import groovyx.net.http.ContentType
+import groovyx.net.http.RESTClient
+
+@Grapes(
+    @Grab(group='org.codehaus.groovy.modules', module='httpbuilder-ng', version='0.9.1')
+)
+
+
+String base = 'http://api.icndb.com'
+
+def chuck = new RESTClient(base)
+def params = [firstName: "Jacopo", lastName: "De Angelis"]
+
+chuck.contentType = ContentType.JSON
+chuck.get( path: '/jokes/random', query: params ) { response, json ->
+    println response.status
+    println json
+}
+\end{lstlisting}
+
+Un builder open molto comodo è \href{https://github.com/jgritman/httpbuilder/}{HTTPBuilder}
+
+Un esempio più serio:
+\begin{lstlisting}[language = groovy]
+def "testCase"() {
+        def token = getOAuth2TokenUsingClientCredentials(restClient, 'superup_trusted_client', getClientSecret())
+        addAuthorization(restClient, token)
+
+        def response = restClient.post(
+                path: getBasePathWithSite() + '/dataupdate/batch',
+                query: ['dataType': 'PRODUCTS', 'delta': true, 'modifiedSinceTimestamp': 10000000],
+                contentType: JSON,
+                requestContentType: URLENC)
+
+        with(response) {
+            if (isNotEmpty(data) && isNotEmpty(data.errors)) println(data)
+            !data.errors
+            status == SC_OK
+            !data.uniqueUpdateId.empty
+        }
+    }
+\end{lstlisting}
+
 \chapter{Materiali utili}
 \href{https://groovy-lang.org/}{Documentazione}
 
