@@ -9,4 +9,4 @@
 *.blg
 *.bbl
 **/__pycache__/**
-**.idea/**
+**/.idea/**
