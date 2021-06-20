@@ -789,6 +789,174 @@ use(TimeCategory) {
 }
 \end{lstlisting}
 
+\chapter{Builders}
+Sono strumenti comodi per creare oggetti di vario tipo.
+
+\section{MarkupBuilderXML}
+\begin{lstlisting}[language = groovy]
+MarkupBuilder builder = new MarkupBuilder()
+
+builder.sports {
+	sport(id:1) {
+		name "Baseball"
+	}
+	sport(id:2) {
+		name "Basketball"
+	}
+	sport(id:3) {
+		name "Soccer"
+	}
+	sport(id:4) {
+		name "Hockey"
+	}
+}
+\end{lstlisting}
+\begin{lstlisting}[language = xml]
+<sports>
+  <sport id='1'>
+    <name>Baseball</name>
+  </sport>
+  <sport id='2'>
+    <name>Basketball</name>
+  </sport>
+  <sport id='3'>
+    <name>Soccer</name>
+  </sport>
+  <sport id='4'>
+    <name>Hockey</name>
+  </sport>
+</sports> 
+\end{lstlisting}
+
+É così semplice creare un xml.
+Nella \href{https://groovy-lang.org/processing-xml.html}{documentazione} ci sono alcuni metodi interessanti come "omitEmptyAttributes".
+
+\section{MarkupBUilder}
+Permette di costruire HTML.
+
+\begin{lstlisting}[language = groovy]
+// def writer = new FileWriter('markup.html')
+def writer = new StringWriter()
+
+def html = new groovy.xml.MarkupBuilder(writer)
+  html.html {
+    head { title 'Constructed by MarkupBuilder' }
+    body {
+      h1 'What can I do with MarkupBuilder?'
+      form (action:'whatever') {
+        for (line in ['Produce HTML','Produce XML','Have some fun'])
+        {
+          input(type:'checkbox',checked:'checked', id:line, '')
+          label(for:line, line)
+          br('')
+        }
+      }
+    }
+  }
+
+print writer.toString()
+\end{lstlisting}
+\begin{lstlisting}[language = HTML]
+<html>
+  <head>
+    <title>Constructed by MarkupBuilder</title>
+  </head>
+  <body>
+    <h1>What can I do with MarkupBuilder?</h1>
+    <form action='whatever'>
+      <input type='checkbox' checked='checked' id='Produce HTML'></input>
+      <label for='Produce HTML'>Produce HTML</label>
+      <br></br>
+      <input type='checkbox' checked='checked' id='Produce XML'></input>
+      <label for='Produce XML'>Produce XML</label>
+      <br></br>
+      <input type='checkbox' checked='checked' id='Have some fun'></input>
+      <label for='Have some fun'>Have some fun</label>
+      <br></br>
+    </form>
+  </body>
+</html>
+\end{lstlisting}
+
+\section{JSonbuilder}
+\begin{lstlisting}[language = groovy]
+import groovy.json.JsonBuilder
+
+def builder = new JsonBuilder()
+builder.customer {
+  name 'John'
+  lastName 'Appleseed'
+  address {
+    streetName 'Gordon street'
+    city 'Philadelphia'
+    houseNumber 20
+  }
+}
+println builder.toPrettyString()
+\end{lstlisting}
+\begin{lstlisting}[language = ]
+{
+    "customer": {
+        "name": "John",
+        "lastName": "Appleseed",
+        "address": {
+            "streetName": "Gordon street",
+            "city": "Philadelphia",
+            "houseNumber": 20
+        }
+    }
+}
+\end{lstlisting}
+
+\section{Object Graph Builder}
+Permette di costruire un oggetto complesso senza troppi passaggi, qua un esempio:
+\begin{lstlisting}[language = groovy]
+class School {
+    String name
+    List<Course> courses = []
+}
+ 
+class Course {
+    String name
+    Teacher teacher
+    List<Student> students = []
+}
+ 
+class Teacher { String name }
+ 
+class Student { String name }
+ 
+def builder = new ObjectGraphBuilder(classLoader: getClass().classLoader) // Need classLoader when in Groovy console.
+def firstSchool = builder.school(name: 'First School') {
+    course(name: 'Math') {
+        teacher(name: 'Matt')
+        student(name: 'Mary', id: 'Mary')  // id attribute allows us to reference it later in the builder.
+        student(name: 'John', id: 'John')
+        student(name: 'Rose', id: 'Rose')
+    }
+    course(name: 'English') {
+        teacher(name: 'Emily', id: 'Emily')
+        student(refId: 'Mary')  // refId refers to id attribute we set earlier.
+        student(name: 'Alex')
+        student(refId: 'Rose')
+    }
+    course(name: 'Java') {
+        teacher(refId: 'Emily')
+        student(name: 'mrhaki')
+        student(refId: 'John')
+        student(refId: 'Mary')
+    }   
+}
+ 
+assert 'First School' == firstSchool.name
+assert 3 == firstSchool.courses.size()
+assert 'Math' == firstSchool.courses[0].name
+assert 'Matt' == firstSchool.courses[0].teacher.name
+assert 3 == firstSchool.courses[0].students.size()
+assert ['English', 'Java'] == firstSchool.courses.findAll{ it.teacher.name == 'Emily' }.name
+assert 'mrhaki' == firstSchool.courses[2].students.find { it.name == 'mrhaki' }.name
+assert 'Mary' == firstSchool.courses.find{ it.name == 'Java' }.students.find{ it.name == 'Mary' }.name
+\end{lstlisting}
 \chapter{Materiali utili}
 \href{https://groovy-lang.org/}{Documentazione}
 
