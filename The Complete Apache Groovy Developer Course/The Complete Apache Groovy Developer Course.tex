@@ -1112,6 +1112,280 @@ def "testCase"() {
     }
 \end{lstlisting}
 
+\chapter{GDK e API}
+\section{I/O}
+\href{https://docs.groovy-lang.org/latest/html/groovy-jdk/java/io/File.html}{Documentazione}
+
+\begin{lstlisting}[language = groovy]
+// Crea un File ma non lo scrive sul disco
+def file = new File('dummy.txt')
+
+// list all the directories in a given path
+String dir = 'apache-groovy-course'
+List hidden = []
+new File(dir).eachFile { file ->
+
+    if( file.isDirectory() ){
+        println file.name
+    }
+
+    if( file.isHidden() ) {
+        hidden << file.name
+    }
+
+}
+
+//println hidden
+
+
+String groovyCourse = 'apache-groovy-course'
+new File(groovyCourse).eachDir { subfolder ->
+    println subfolder
+}
+
+
+def groovyCourseDir = new File('apache-groovy-course')
+println groovyCourseDir.directorySize()
+
+
+// create a new directory
+new File('dummy').mkdir()
+
+
+// create a bunch of directories
+new File('one/two/three').mkdirs()
+
+
+new File('dummy').deleteDir()
+\end{lstlisting}
+
+\section{Thread}
+\href{https://docs.groovy-lang.org/latest/html/groovy-jdk/java/lang/Thread.html}{Documentazione}
+
+\begin{lstlisting}[language = groovy]
+package groovy
+
+// Right away Groovy is going to make our lives easier when it comes to creating threads
+// A Closure in groovy implements Runnable. This means that we can create a new thread pretty easily
+
+def t = new Thread() { /* do something */ }
+t.start()
+
+// Show Thread GDK
+// This means that we can simplify the code above to
+
+Thread.start { /* do something */ }
+Thread.start('thread-name') { /* do something */ }
+
+// In Java you can create a daemon thread and therefor in Groovy you can do the same.
+// A daemon thread is one that runs in the background and isn't tied to a program. This means a program can exit
+// with daemon threads still running
+
+Thread.startDaemon { /* do something */ }
+Thread.startDaemon('thread-name') { /* do something */ }
+\end{lstlisting}
+
+\begin{lstlisting}[language = groovy]
+package groovy
+
+import java.util.concurrent.BlockingQueue
+import java.util.concurrent.LinkedBlockingQueue
+
+List numbers = []
+
+// push
+10.times {
+    println "push\t: ${it}"
+    numbers << it
+}
+
+println numbers
+
+for( i in 9..0 ) {
+    println "pop\t: ${i}"
+    numbers.pop()
+}
+
+println numbers
+
+// but what if we wanted to do this concurrently
+
+BlockingQueue sharedQueue = [] as LinkedBlockingQueue
+
+Thread.start('push') {
+    10.times {
+        try {
+            println "${Thread.currentThread().name}\t: ${it}"
+            sharedQueue << it
+            sleep 100
+        } catch (InterruptedException ignore) {
+            // catch exception
+        }
+    }
+}
+
+Thread.start('pop'){
+    for( i in 0..9 ) {
+        sleep 200
+        println "${Thread.currentThread().name}\t: ${sharedQueue.take()}"
+    }
+}
+\end{lstlisting}
+
+\section{Databases}
+\href{https://docs.groovy-lang.org/latest/html/groovy-jdk/groovy/sql/package-frame.html}{Documentazione}
+
+\begin{lstlisting}[language = groovy]
+import groovy.sql.GroovyRowResult
+import groovy.sql.Sql
+
+String username = "twitter"
+String password = "password"
+
+String url = "jdbc:mysql://localhost:3306/twitter"
+
+Sql.withInstance(url,username,password){
+
+    // create schema
+    sql.execute('DROP TABLE IF EXISTS users')
+    sql.execute '''
+    CREATE TABLE users (
+          id INT NOT NULL,
+          username VARCHAR(45) NOT NULL,
+          bio VARCHAR(45) NULL,
+          PRIMARY KEY (id)
+      );
+    '''
+
+    // create some data
+    sql.execute '''
+        INSERT INTO users (id,username,bio) VALUES (1,'therealdanvega','Programmer.Blogger.YouTuber.Teacher.')
+    '''
+
+    def twitterUser = [id:2,username:'foo',bio:'foo']
+
+    sql.execute """
+      INSERT INTO users (id,username,bio)
+      VALUES
+      (${twitterUser.id},${twitterUser.username},${twitterUser.bio})
+    """
+
+
+    //List<GroovyRowResult> rows = sql.rows("select * from users")
+    //println rows
+
+    sql.eachRow('select * from users') { row ->
+        println "Tweet: @${row.username}"
+    }  
+}
+
+println "Completed!"
+\end{lstlisting}
+
+\section{Templates}
+\href{https://docs.groovy-lang.org/docs/next/html/documentation/template-engines.html}{Documentazione}
+
+Le variabili nel testo sono segnate come \$nome\_variabile. Può accogliere anche del codice
+\begin{lstlisting}[language = ]
+/*
+    Template Placeholders
+    $variable         Inserts the value of the variable into the text
+    ${groovycode}     Evaluates single line groovy codeand inserts the result into the text
+    <%=groovycode%>   Evaluate the groovy code and insert the result into the text
+    <%groovycode%>    Evaluate the groovy code
+ */
+ 
+Dear $firstName $lastName,
+This is your monthly notification of your Github activity. You currently have ${repositories.size()} repositories on Github and you
+had a total of $commits commits this month. We wanted to let you know that these are your latest 3 repositories by activity.
+
+<% repositories.each { repo ->
+    println "\t> $repo.name"
+} %>
+
+We thank you for using Github and wish you another month of happy committing.
+
+Thank You
+Github
+www.github.com
+\end{lstlisting}
+
+\begin{lstlisting}[language = groovy]
+import groovy.text.SimpleTemplateEngine
+import groovy.text.Template
+
+//String text = new File('dynamic-email.txt').text
+//println text
+
+// 3 components to building a dynamic template
+
+// 1. Engine (SimpleTemplateEngine)
+// 2. Template (the email)
+// 3. Data Bindings (The Data to insert into the dynamic portions of our email)
+
+// new SimpleTemplateEngine(true)
+SimpleTemplateEngine engine = new SimpleTemplateEngine(true)
+Template template = engine.createTemplate( new File('dynamic-email.txt') )
+
+// show error if properties are missing
+Map bindings = [
+        firstName: "Dan",
+        lastName: "Vega",
+        commits: 27,
+        repositories: [
+            [name:'Apache Groovy Course',url:'https://github.com/cfaddict/apache-groovy-course'],
+            [name:'Spring Boot REST',url:'https://github.com/cfaddict/spring-boot-rest'],
+            [name:'Learn Spring Boot',url:'https://github.com/cfaddict/learnspringboot']
+        ]
+]
+
+println template.make(bindings)
+\end{lstlisting}
+
+\section{Date}
+\href{https://docs.groovy-lang.org/latest/html/groovy-jdk/java/util/Date.html}{Documentazione}
+
+In groovy lavorare con le date è abbastanza semplice.
+\begin{lstlisting}[language = groovy]
+//create a new date
+Date today = new Date()
+println today
+println "-------------"
+
+Date bday = new Date("08/21/1978")
+println bday
+println bday.format('M-d-Y')
+println "-------------"
+
+// add & subtract
+Date oneWeekFromToday = today + 7
+Date oneWeekAgo = today - 7
+println oneWeekFromToday
+println oneWeekAgo
+println "-------------"
+
+// downto & upto
+oneWeekFromToday.downto(today){
+    println it
+}
+println "-------------"
+
+Range twoWeeks = oneWeekAgo..oneWeekFromToday
+twoWeeks.each {
+    println it
+}
+println "-------------"
+
+// next & previous
+Date newyear = new Date('01/01/2017')
+println newyear.next()
+println newyear.previous()
+println "-------------"
+
+Date rightnow = new Date()
+println rightnow.toTimestamp()
+\end{lstlisting}
+
 \chapter{Materiali utili}
 \href{https://groovy-lang.org/}{Documentazione}
 
