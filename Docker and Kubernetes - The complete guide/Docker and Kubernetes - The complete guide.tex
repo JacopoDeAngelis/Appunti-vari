@@ -24,4 +24,22 @@
 \tableofcontents
 \pagebreak
 
+\chapter{Perchè usare docker e cos'è?}
+Docker si prefigge di permettere di passare un software senza doversi preoccupare di dipendenze o altro.
+
+Immagine: un singolo file con tutte le dipendenze e le configurazioni richieste per lanciare un programma.
+
+Container: istanza di un'immagine. 
+
+Il docker client ci permette di interfacciarci con il docker server, un programma col quale non ci interfacciamo direttamente ma è un processo che lavora dietro le quinte.
+
+\chapter{Manipolazione dei container}
+\emph{docker run <nome immagine>}: lancia il programma all'interno del programma.
+
+\emph{docker run <nome immagine> <comando>}: all'interno di un'immagine viene lanciato il comando specificato e non quello di default. Nel caso il comando non fosse presente all'interno delle cartelle verrà mostrato un messaggio d'errore.
+
+Quando viene lanciato run viene creato un container. Tutti i container possono essere mostrati tramite \emph{docker ps --all}.
+
+
+
 \end{document}
