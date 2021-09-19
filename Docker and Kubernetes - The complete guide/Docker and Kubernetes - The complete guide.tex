@@ -2,19 +2,6 @@
 
 \usepackage{Appunti}
 
-\definecolor{groovyblue}{HTML}{0000A0}
-\definecolor{groovygreen}{HTML}{008000}
-\definecolor{darkgray}{rgb}{.4,.4,.4}
- 
-\lstdefinelanguage{Groovy}[]{Java}{
-  keywordstyle=\color{groovyblue}\bfseries,
-  stringstyle=\color{groovygreen}\ttfamily,
-  keywords=[3]{each, findAll, groupBy, collect, inject, eachWithIndex},
-  morekeywords={def, as, in, use},
-  moredelim=[is][\textcolor{darkgray}]{\%\%}{\%\%},
-  moredelim=[il][\textcolor{darkgray}]{§§}
-}
-
 \begin{document}
 \title{Docker and Kubernetes: The Complete Guide}
 \author{Jacopo De Angelis}
@@ -27,19 +14,96 @@
 \chapter{Perchè usare docker e cos'è?}
 Docker si prefigge di permettere di passare un software senza doversi preoccupare di dipendenze o altro.
 
-Immagine: un singolo file con tutte le dipendenze e le configurazioni richieste per lanciare un programma.
+\textbf{Immagine}: un singolo file con tutte le dipendenze e le configurazioni richieste per lanciare un programma.
 
-Container: istanza di un'immagine. 
+\textbf{Container}: istanza di un'immagine. 
 
 Il docker client ci permette di interfacciarci con il docker server, un programma col quale non ci interfacciamo direttamente ma è un processo che lavora dietro le quinte.
 
 \chapter{Manipolazione dei container}
-\emph{docker run <nome immagine>}: lancia il programma all'interno del programma.
+\section{docker run}
+\emph{\textbf{docker run $<$nome immagine$>$}}: lancia il programma all'interno del programma.
 
-\emph{docker run <nome immagine> <comando>}: all'interno di un'immagine viene lanciato il comando specificato e non quello di default. Nel caso il comando non fosse presente all'interno delle cartelle verrà mostrato un messaggio d'errore.
+\emph{\textbf{docker run $<$nome immagine$>$ $<$comando$>$}}: all'interno di un'immagine viene lanciato il comando specificato e non quello di default. Nel caso il comando non fosse presente all'interno delle cartelle verrà mostrato un messaggio d'errore.
 
-Quando viene lanciato run viene creato un container. Tutti i container possono essere mostrati tramite \emph{docker ps --all}.
+\begin{figure}[h!]
+	\begin{center}
+		\includegraphics[scale=0.5]{img/002.jpg}
+		\caption{Docker run}
+		\label{fig: 002}
+	\end{center}
+\end{figure}
 
+Quando viene lanciato run viene creato un container. 
 
+\section{docker ps}
+Tutti i container possono essere mostrati tramite \emph{\textbf{docker ps}}, se vogliamo vedere anche quelli che sono stati terminati in passato allora lanciamo \emph{\textbf{docker ps --all}}. Se vogliamo lanciare un comando relativo ad uno specifico container allora dovremo utilizzare il suo ID o il suo nome.
+
+\begin{figure}[h!]
+	\begin{center}
+		\includegraphics[scale=0.5]{img/001.jpg}
+		\caption{Docker ps}
+		\label{fig: 001}
+	\end{center}
+\end{figure}
+
+\section{docker run = docker create + docker start}
+\emph{\textbf{docker run}} in realtà deriva dall'unione di due comandi: \emph{\textbf{docker create}} e \emph{\textbf{docker start}}; col primo comando semplicemente prepariamo il container, preparandone le risorse.
+
+\emph{\textbf{docker create}} restituisce un ID che può essere usato tramite \emph{\textbf{docker start}}. \emph{\textbf{docker start $<$id$>$}} semplicemente restituirà nuovamente l'id ma avviserà che il container sarà attivato, \emph{\textbf{docker start -a $<$id$>$}} eseguirà anche il comando interno al container.
+
+\begin{figure}[h!]
+	\begin{center}
+		\includegraphics[scale=0.6]{img/003.jpg}
+		\caption{docker create e docker start}
+		\label{fig: 003}
+	\end{center}
+\end{figure}
+
+Quando un container è stato spento non vuole dire che non possa essere riavviato, semplicemente dovremo usare \emph{\textbf{docker start -a $<$id$>$}} dove l'id è quello del container spento, così verrà rieseguito il comando eseguito precedentemente.
+
+\section{Eliminazione e terminazione di un container}
+\emph{\textbf{docker system prune}} rimuove tutti i container spenti, tutti i network inutilizzati, tutte le immagini non usate e la cache.
+
+\emph{\textbf{docker logs $<$container id$>$}} permette di recuperare tutti i log da un container. \emph{docker logs} non fa ripartire un container, ne recupera solo i log.
+\begin{figure}[h!]
+	\begin{center}
+		\includegraphics[scale=0.6]{img/005.jpg}
+		\caption{docker logs}
+		\label{fig: 005}
+	\end{center}
+\end{figure}
+
+\emph{\textbf{docker stop $<$container id$>$}} stoppa un container mandando un comando di terminazione del segnale per il container (SIGTERM), questo vuole dire che ci verrà restituito un segnale che potremo usare per fare partire altri comandi. Nel caso il container non termini entro 10 secondi verrà mandato un SIGKILL.
+
+\emph{\textbf{docker kill $<$container id$>$}} stoppa un container mandando un comando di terminazione definitiva per il container (SIGKILL), questo vuole dire che appena viene lanciato non c'è niente che possa essere fatto dopo in risposta.
+
+\section{Agire con un container}
+Se avviamo un container in docker e poi proviamo a lanciare dei comandi per interagire con esso dall'esterno come se nulla fosse otterremmo un errore, questo deriva dal fatto che le risorse del container sono accessibili solo da dentro il container. Infatti come si vede dall'immagine \ref{fig: 006}, all'interno di docker è stato lanciato un server di redis ma se provassimo ad avviare una connessione a redis dall'esterno direttamente otterremmo un errore nel quale ci viene detto che redis non è attivo.
+\begin{figure}[h!]
+	\begin{center}
+		\includegraphics[scale=0.6]{img/006.jpg}
+		\caption{docker non accessibile dall'esterno}
+		\label{fig: 006}
+	\end{center}
+\end{figure}
+
+Per questo dobbiamo lanciare \emph\textbf{{docker exec -it $<$container id$>$ $<$comando$>$}}, in questo modo diciamo che vogliamo eseguire un comando (exec) attraverso un input (-it) all'interno del container specificato.
+
+\begin{figure}[h!]
+	\begin{center}
+		\includegraphics[scale=0.6]{img/007.jpg}
+		\caption{docker exec}
+		\label{fig: 007}
+	\end{center}
+\end{figure}
+
+Senza -it non potremmo inserire alcun input. Ogni processo in un container ha tre stream (stdin, stdout, stderr). Attenzione, it è in realtà -i -t, nel primo stiamo dicendo ricevi l'input in stdin, -t segnala che si vuole un output leggibile.
+
+\section{Aprire un prompt all'interno di un container}
+\emph{\textbf{docker exec -it $<$container id$>$ sh}}, quel sh ci permette di aprire un terminale all'interno del container. Per uscire dal container \emph{ctrl + D}. \emph{\textbf{docker run -it $<$container id$>$ sh}} ottiene lo stesso risultato.
+
+\section{Isolamento dei container}
+Come è già stato detto un container ha il suo set di risorse e di memoria, questo vuole dire che i container non condividono nessuna informazione tra di loro.
 
 \end{document}
