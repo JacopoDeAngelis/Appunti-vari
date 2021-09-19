@@ -155,4 +155,28 @@ In questo modo potremmo usare un'immagine specifica tramite il tag usato, soprat
 \section{docker commit}
 \emph{\textbf{docker commit -c 'CMD $<$comando$>$' $<$container id$>$}} fondamentalmente permette di creare un'immagine da un container attivo, fa ciò che fa un dockerfile ma dopo svariate modifiche dentro ad un container.
 
+\chapter{docker compose}
+\emph{\textbf{docker-compose}} permette di mettere in contatto più container senza dovere ripetere ogni volta gli stessi comandi. docker-compose sfrutta un file yml chiamato \textbf{docker-compose.yml}. 
+\begin{lstlisting}
+version: '3' # versione di docker-compose
+services:
+  redis-server:
+    image: 'redis' # immagine su cui basarsi
+  node-app:
+    restart: always # riavvia automaticamente il servizio se si interrompe, on-failure si avvisa solo se l'exit code non è 0
+    build: . # cartella da costruire
+    ports:
+      - "4081:8081" # porta dell'host:porta del container
+\end{lstlisting}
+
+docker-compose si occupa di creare questi due container all'interno dello stesso network, in questo modo non serve collegarli manualmente.
+
+Invece di usare \emph{\textbf{docker run $<$immagine$>$}} ci basterà dire \emph{\textbf{docker-compose up}}.
+
+Nel caso volessimo ricostruire le immagini ci basterebbe mettere \emph{\textbf{docker-compose up --build}}.
+
+
+\emph{\textbf{docker-compose down}} spegne tutti i container assieme.
+
+\emph{\textbf{docker-compose ps}} elenca i container attivi nella cartella.
 \end{document}
