@@ -92,9 +92,12 @@ Per questo dobbiamo lanciare \emph\textbf{{docker exec -it $<$container id$>$ $<
 
 \begin{figure}[h!]
 	\begin{center}
-		\includegraphics[scale=0.6]{img/007.jpg}
+		\includegraphics[scale=0.6]{img/007a.jpg}
 		\caption{docker exec}
-		\label{fig: 007}
+		\label{fig: 007a}
+		\includegraphics[scale=0.6]{img/007b.jpg}
+		\caption{docker exec}
+		\label{fig: 007b}
 	\end{center}
 \end{figure}
 
@@ -105,5 +108,51 @@ Senza -it non potremmo inserire alcun input. Ogni processo in un container ha tr
 
 \section{Isolamento dei container}
 Come è già stato detto un container ha il suo set di risorse e di memoria, questo vuole dire che i container non condividono nessuna informazione tra di loro.
+
+\chapter{Creazione di un'immagine}
+Dovremo creare un dockerfile. Immaginiamo di volere creare un'immagine che lancerà il redis server al suo avvio.
+
+Prima di tutto creiamo una nuova cartella che conterrà i file, al suo interno creiamo un file chiamato \textbf{Dockerfile}, nessuna estensione. Al suo interno scriviamo un set di istruzioni:
+\begin{lstlisting}
+# Usare un'immagine esistente come base
+FROM alpine
+
+# Scaricare e installare una dipendenza
+RUN apk add --update redis
+
+# Dire all'immagine cosa fare al suo avvio come container
+CMD ["redis-server"]
+\end{lstlisting}
+
+A questo punto scriviamo in console da dentro la cartella \emph{\textbf{docker build .}}, così verrà creata l'ìmmagine scaricando l'immagine di ALPINE, aggiornando il pacchetto redis e poi creare di default il comando redis-server.
+
+\begin{figure}[h!]
+	\begin{center}
+		\includegraphics[scale=0.6]{img/008.jpg}
+		\caption{docker build}
+		\label{fig: 008}
+	\end{center}
+\end{figure}
+
+Il dockerfile contiene i vari step di creazione:
+\begin{itemize}
+	\item \textbf{FROM}: da che base
+	\item \textbf{RUN}: eseguire un comando durante la preparazione dell'immagine
+	\item \textbf{CMD}: cosa verrà lanciato all'avvio
+\end{itemize}
+
+\section{Cos'è un'immagine di base?}
+Immaginiamo di dovere installare un programma senza avere un sistema operativo installato, quale sarebbe il primo passo? Installare un sistema operativo.
+
+\section{E se modificassimo dockerfile?}
+Nel caso di una modifica e di una successiva build docker userebbe la cache per partire dall'ultimo punto valido, in questo modo risparmierebbe tempo e risorse.
+
+\section{Taggare un'immagine}
+\emph{\textbf{docker build -t $<$docker ID/nome della repo/versione$>$}} permette di creare un tag per l'immagine. Solitamente questa è la sequenza usata, la versione tendenzialmente è "latest".
+
+In questo modo potremmo usare un'immagine specifica tramite il tag usato, soprattutto se scaricato da docker hub.
+
+\section{docker commit}
+\emph{\textbf{docker commit -c 'CMD $<$comando$>$' $<$container id$>$}} fondamentalmente permette di creare un'immagine da un container attivo, fa ciò che fa un dockerfile ma dopo svariate modifiche dentro ad un container.
 
 \end{document}
