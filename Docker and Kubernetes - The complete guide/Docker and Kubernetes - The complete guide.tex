@@ -179,4 +179,7 @@ Nel caso volessimo ricostruire le immagini ci basterebbe mettere \emph{\textbf{d
 \emph{\textbf{docker-compose down}} spegne tutti i container assieme.
 
 \emph{\textbf{docker-compose ps}} elenca i container attivi nella cartella.
+
+\chapter{docker volumes}
+I volumi sono semplicemente riferimenti a cartelle dell'host, in questo modo possiamo permettere un'interazione tra i due in maniera diretta. Il comando è \emph{\textbf{docker run -p $<$porta host$>$:$<$porta container$>$ -v $<$cartella relativa del volume$>$ -v \$($<$nome all-interno del volume$>$:/$<$cartella host$>$ $<$image ID$>$}}.
 \end{document}
