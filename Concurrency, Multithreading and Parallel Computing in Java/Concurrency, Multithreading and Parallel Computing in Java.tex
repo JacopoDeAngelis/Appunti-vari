@@ -1,0 +1,58 @@
+\documentclass[11pt,a4paper]{book}
+
+\usepackage{Appunti}
+
+\begin{document}
+\title{Concurrency, Multithreading and Parallel Computing in Java}
+\author{Jacopo De Angelis}
+\maketitle
+
+\pagebreak
+\tableofcontents
+\pagebreak
+
+\chapter{Multhithreading theory}
+\section{Processi e thread}
+I processi e i thread sono indipendenti tra di loro:
+\begin{itemize}
+	\item i \textbf{processi} sono l'istanza di esecuzione: ogni processo ha registri indipendenti, uno stack di memoria e un heap per ogni procesos. In java si crea con \textbf{ProcessBuilder}.
+	\item i \textbf{thread} sono l'unità di esecuzione di un processo: un processo può avere più thread, ogni thread condivide memoria e risorse.
+\end{itemize}
+
+\section{Time slicing}
+Il tempo di funzionamento di un core è diviso tra i suoi thread, il modo nel quale il tempo è diviso tra di essi è deciso tramite un algoritmo di time slicing.
+
+\section{Vantaggi del multithreading}
+La possibilità di svolgere più lavori contemporaneamente senza dovere attendere la fine di uno per iniziare l'altro.
+
+\section{Svantaggi del multithreading}
+Problemi di sincronizzazione e di utilizzo delle risorse possono rendere il multithreading inefficiente. Il debug è più complicato.
+
+\section{Ciclo di vita di un thread}
+\begin{itemize}
+	\item instanziazione (new): quando viene creato
+	\item in funzione (runnable): quando viene eseguito tramite start()
+	\item in attesa (waiting): passaggio ad uno stato di attesa tramite wait() e sleep()
+	\item fine vita (dead): quando il thread termina la sua funzione
+\end{itemize}
+
+\chapter{Manipolazione dei thread}
+\section{Interfaccia Runnable}
+\href{https://docs.oracle.com/javase/7/docs/api/java/lang/Runnable.html}{Runnable} porta ad implementare una funzione run() dentro alla quale viene posta la parte logica del thread. Il thread a questo punto viene eseguito tramite start()
+
+\section{Classe Thread}
+Estendendo la classe \href{https://docs.oracle.com/javase/7/docs/api/java/lang/Thread.html}{Thread} si ottiene lo stesos risultato ma con il limite di non potere estendere altre classi, si ottengono però i suoi metodi.
+
+\section{join()}
+\emph{thread.join()} attende la fine dell'esecuzione del thread. Serve per segnalare quando il thread muore.
+
+\section{Deamon e Worker}
+\begin{itemize}
+	\item \textbf{Deamon}: è un thread che vive durante tutta la vita del \textbf{processo}. Sono thread di aiuto, ad esempio il garbage collector. 
+	\item \textbf{Worker}: è un thread che vive durante la propria vita
+\end{itemize}
+
+\chapter{Comunicazione tra thread}
+Le variabili locali vivono sullo stack, gli oggetti che sono instanziati vivono sull'heap. \textbf{Ogni thread ha il suo stack ma tutti i thread condividono l'heap.} 
+
+\end{document}
