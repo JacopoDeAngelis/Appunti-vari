@@ -1,0 +1,9 @@
+version: '3' # versione di docker-compose
+services:
+  redis-server:
+    image: 'redis' # immagine su cui basarsi
+  node-app:
+    restart: always # riavvia automaticamente il servizio se si interrompe, on-failure si avvisa solo se l'exit code non è 0
+    build: . # cartella da costruire
+    ports:
+      - "4081:8081" # porta dell'host:porta del container
